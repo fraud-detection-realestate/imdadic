@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyclass
+*.cover
+cover/
+.coverage
+.pytest_cache/
+venv/
+env/
+.env
+.venv
+
+# Virtualenv in backend
+/backend/venv/
+
+# VS Code
+/.vscode/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# Logs
+*.log
+logs/
+
+# Build
+/dist/
+/build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# PyCharm
+.idea/
