@@ -26,8 +26,25 @@ const INITIAL_MESSAGE: ChatMessage = {
 };
 
 async function sendMessageToAgent(prompt: string): Promise<string> {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  return "Gracias por tu pregunta. En la versión completa del chat podrás obtener análisis detallados basados en datos reales del sistema IMDADIC.";
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: prompt }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch response");
+    }
+
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
 }
 
 function formatTime(date: Date): string {
@@ -41,26 +58,23 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
   return (
     <article
-      className={`flex animate-in fade-in slide-in-from-bottom-2 duration-200 ${
-        isUser ? "flex-row-reverse" : "flex-row"
-      } items-start gap-2`}
+      className={`flex animate-in fade-in slide-in-from-bottom-2 duration-200 ${isUser ? "flex-row-reverse" : "flex-row"
+        } items-start gap-2`}
     >
       <div
-        className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg shadow-sm ${
-          isUser
+        className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg shadow-sm ${isUser
             ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
             : "bg-gradient-to-br from-blue-600 to-blue-700"
-        }`}
+          }`}
       >
         <Icon name={isUser ? "target" : "lightbulb"} className="h-3.5 w-3.5 text-white" />
       </div>
       <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} max-w-[75%]`}>
         <div
-          className={`rounded-xl px-3 py-2 shadow-sm ${
-            isUser
+          className={`rounded-xl px-3 py-2 shadow-sm ${isUser
               ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-900"
               : "border border-slate-200 bg-white text-slate-900"
-          }`}
+            }`}
         >
           <p className="text-xs leading-relaxed">{message.content}</p>
         </div>
@@ -228,9 +242,8 @@ export function ChatWidget() {
       <button
         type="button"
         onClick={handleToggle}
-        className={`group relative flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-blue-600 to-blue-700 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:scale-105 active:scale-95 ${
-          isOpen ? "rotate-0" : ""
-        }`}
+        className={`group relative flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-blue-600 to-blue-700 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:scale-105 active:scale-95 ${isOpen ? "rotate-0" : ""
+          }`}
         aria-label={isOpen ? "Cerrar chat" : "Abrir chat"}
       >
         <span className="hidden sm:inline">{isOpen ? "Cerrar chat" : "¿Necesitas ayuda?"}</span>

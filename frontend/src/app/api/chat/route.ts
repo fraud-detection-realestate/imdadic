@@ -5,20 +5,40 @@ import type { NextRequest } from "next/server";
 // En producción, aquí se integrará la llamada a Claude, GPT-4, etc., y a la BD IMDADIC.
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => ({}));
-  const mensaje: string = body.mensaje ?? "";
+  try {
+    const body = await req.json();
+    const message: string = body.message ?? "";
 
-  const respuesta = `Esta es una respuesta mock del asistente IMDADIC. Tu consulta fue: "${mensaje}". ` +
-    "En producción, aquí se consultará el backend (SQL/Elasticsearch) y la API de IA para generar un análisis con citas.";
+    console.log("Sending request to backend:", { message });
 
-  return NextResponse.json({
-    respuesta,
-    citas: [
-      {
-        tipo: "sql",
-        descripcion: "Consulta de ejemplo utilizada para ilustrar la respuesta (mock)",
-        fragmento: "SELECT * FROM anomalies WHERE id = 'A-2025-0001';",
+    // Forward request to backend
+    const backendResponse = await fetch("http://127.0.0.1:8000/api/v1/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    ],
-  });
+      body: JSON.stringify({ message }),
+    });
+
+    console.log("Backend response status:", backendResponse.status);
+
+    if (!backendResponse.ok) {
+      const errorText = await backendResponse.text();
+      console.error("Backend error details:", errorText);
+      return NextResponse.json(
+        { error: `Error connecting to backend service: ${backendResponse.status} ${backendResponse.statusText}` },
+        { status: backendResponse.status }
+      );
+    }
+
+    const data = await backendResponse.json();
+    console.log("Backend data received:", data);
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("API route error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }

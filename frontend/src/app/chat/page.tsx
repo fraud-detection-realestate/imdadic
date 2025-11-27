@@ -91,8 +91,25 @@ const BEST_PRACTICES = [
 ];
 
 async function sendMessageToAgent(prompt: string): Promise<string> {
-  await new Promise((resolve) => setTimeout(resolve, 1200));
-  return `Análisis completo: He procesado tu consulta "${prompt.substring(0, 50)}..." y he identificado los siguientes puntos clave basados en los datos actuales del sistema IMDADIC. En una implementación real, aquí se conectaría con el backend de ML para generar respuestas contextuales con datos reales de anomalías inmobiliarias.`;
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: prompt }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch response");
+    }
+
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
 }
 
 function formatTime(date: Date): string {
@@ -106,26 +123,23 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
   return (
     <article
-      className={`flex items-start gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300 ${
-        isUser ? "flex-row-reverse" : "flex-row"
-      }`}
+      className={`flex items-start gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300 ${isUser ? "flex-row-reverse" : "flex-row"
+        }`}
     >
       <div
-        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-md ${
-          isUser
+        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-md ${isUser
             ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
             : "bg-gradient-to-br from-blue-600 to-blue-700"
-        }`}
+          }`}
       >
         <Icon name={isUser ? "target" : "lightbulb"} className="h-5 w-5 text-white" />
       </div>
       <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} max-w-[75%]`}>
         <div
-          className={`rounded-2xl px-4 py-3 shadow-sm ${
-            isUser
+          className={`rounded-2xl px-4 py-3 shadow-sm ${isUser
               ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-900"
               : "border border-slate-200 bg-white text-slate-900"
-          }`}
+            }`}
         >
           <p className="text-sm leading-relaxed">{message.content}</p>
         </div>
@@ -335,7 +349,7 @@ export default function ChatPage() {
                       Chat con Agente IMDADIC
                     </h1>
                     <p className="mt-1 max-w-2xl text-sm text-slate-600">
-                      Conversa con nuestro asistente inteligente para analizar anomalías, explorar tendencias 
+                      Conversa con nuestro asistente inteligente para analizar anomalías, explorar tendencias
                       y obtener insights sobre el mercado inmobiliario
                     </p>
                   </div>
