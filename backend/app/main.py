@@ -10,4 +10,3 @@ app.include_router(chat_router, prefix="/api/v1", tags=["Chat"])
 @app.get("/")
 async def root():
     return {"message": "API is running"}
-                         

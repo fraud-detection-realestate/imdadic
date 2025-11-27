@@ -9,5 +9,3 @@ router = APIRouter()
 async def chat_endpoint(req: ChatRequest):
     response = gemini_service.generate_response(req.message)
     return ChatResponse(response=response)
-
-
