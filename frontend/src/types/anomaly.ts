@@ -4,7 +4,12 @@ export type AnomalyType =
   | "sobrevaloracion"
   | "subvaloracion"
   | "flipping"
-  | "inconsistencia";
+  | "inconsistencia"
+  | "otro patron"
+  | "valor infimo"
+  | "trafico juridico inusual"
+  | "valor extremo"
+  | string;
 
 export interface AnomalyRecord {
   id: string;

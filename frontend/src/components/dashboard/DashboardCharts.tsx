@@ -33,10 +33,10 @@ export function DashboardCharts({
         <div className="mb-3 flex items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">
-              Tendencia temporal de anomalías (mock)
+              Tendencia temporal de anomalías
             </h2>
             <p className="text-xs text-slate-500">
-              Evolución mensual del conteo de anomalías detectadas por los modelos.
+              Evolución temporal del conteo de anomalías detectadas por los modelos.
             </p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export function DashboardCharts({
         <MapSummaryCard totalAnomalies={anomalías.length} topCity={ciudadTop} />
         <div className="rounded-xl border border-slate-200 bg-white/80 p-4 shadow-sm">
           <h2 className="text-sm font-semibold text-slate-900 mb-3">
-            Distribución por severidad (mock)
+            Distribución por severidad
           </h2>
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
