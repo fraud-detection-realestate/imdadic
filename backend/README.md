@@ -63,17 +63,31 @@ The API will be available at `http://127.0.0.1:8000`.
 ## 📂 Project Structure
 
 ```bash
-backend/
-├── app/
-│   ├── api/            # API Route definitions
-│   │   └── v1/         # Version 1 endpoints
-│   ├── core/           # Core configuration (settings, config)
-│   ├── models_ml/      # Codigo para cargar modelos
-│   ├── schemas/        # Pydantic models for request/response validation
-│   ├── services/       # Business logic and external service integrations (Gemini)
-│   └── main.py         # Application entry point
-├── requirements.txt    # Project dependencies
-└── README.md           # Project documentation
+imdadic/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       ├── chat.py
+│   │   │       └── predictions.py  [NEW]
+│   │   ├── core/
+│   │   │   └── config.py
+│   │   ├── models_ml/
+│   │   │   └── model_loader.py  [NEW]
+│   │   ├── schemas/
+│   │   │   ├── chat.py
+│   │   │   └── prediction.py  [NEW]
+│   │   ├── services/
+│   │   │   ├── chat_service.py
+│   │   │   └── prediction_service.py  [NEW]
+│   │   └── main.py  [MODIFIED]
+│   └── requirements.txt  [MODIFIED]
+└── ml_models/
+    └── v1/
+        ├── lgbm_classifier_balanced_v1.pkl
+        ├── model_artifacts_v1.pkl
+        ├── isolation_forest_v1.pkl
+        └── anomalies_artifacts_v1.pkl
 ```
 
 ## 🏗️ Architecture
