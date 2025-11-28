@@ -4,38 +4,45 @@ Backend service for the IMDADIC (Intelligent Market Data Analysis & Detection of
 
 ## 📋 Prerequisites
 
-- Python 3.9+
+- Python 3.12+
 - pip (Python package manager)
 
 ## 🚀 Installation & Setup
 
-1.  **Navigate to the backend directory:**
+1. **Navigate to the backend directory:**
+
     ```bash
     cd backend
     ```
 
-2.  **Create a virtual environment (recommended):**
+2. **Create a virtual environment (recommended):**
+
     ```bash
     python -m venv venv
     ```
 
-3.  **Activate the virtual environment:**
+3. **Activate the virtual environment:**
     - **Windows:**
+
         ```powershell
         .\venv\Scripts\activate
         ```
+
     - **macOS/Linux:**
+
         ```bash
         source venv/bin/activate
         ```
 
-4.  **Install dependencies:**
+4. **Install dependencies:**
+
     ```bash
     pip install -r requirements.txt
     ```
 
-5.  **Environment Configuration:**
+5. **Environment Configuration:**
     Create a `.env` file in the `backend` directory and add your Google Gemini API key:
+
     ```env
     GOOGLE_API_KEY=your_api_key_here
     ```
@@ -49,21 +56,22 @@ uvicorn app.main:app --reload
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
+
 - **Swagger UI:** `http://127.0.0.1:8000/docs`
 - **ReDoc:** `http://127.0.0.1:8000/redoc`
 
 ## 📂 Project Structure
 
-```
+```bash
 backend/
 ├── app/
 │   ├── api/            # API Route definitions
 │   │   └── v1/         # Version 1 endpoints
 │   ├── core/           # Core configuration (settings, config)
+│   ├── models_ml/      # Codigo para cargar modelos
 │   ├── schemas/        # Pydantic models for request/response validation
 │   ├── services/       # Business logic and external service integrations (Gemini)
 │   └── main.py         # Application entry point
-├── agent/              # Agent-specific logic (if applicable)
 ├── requirements.txt    # Project dependencies
 └── README.md           # Project documentation
 ```
@@ -80,4 +88,5 @@ The backend follows a layered architecture:
 ## 🔌 API Endpoints
 
 ### Chat
+
 - `POST /api/v1/chat`: Endpoint for the AI assistant. Receives a user message and returns a generated response.
