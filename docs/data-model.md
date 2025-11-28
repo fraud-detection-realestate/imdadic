@@ -506,3 +506,73 @@ def downgrade():
 4. **Connection Pooling**: Usar pgBouncer en producción
 5. **Query Optimization**: Usar EXPLAIN ANALYZE para queries lentas
 6. **Archivado**: Mover datos antiguos (>5 años) a tablas de archivo
+
+## Arquitectura de Modelos de IA
+
+El sistema utiliza varios modelos de aprendizaje automático para la detección de anomalías en transacciones inmobiliarias. Los modelos están almacenados en el directorio `aimodel/models` y se cargan según sea necesario para el análisis de datos.
+
+### Modelos Disponibles
+
+1. **LightGBM Classifier (lgbm_classifier_balanced_v1.pkl)**
+   - **Propósito**: Clasificación binaria para detectar transacciones sospechosas
+   - **Características principales**:
+     - Entrenado con datos balanceados
+     - Evalúa múltiples características de transacciones y propiedades
+     - Genera un score de probabilidad de anomalía
+   - **Uso**: Clasificación inicial de transacciones
+
+2. **Isolation Forest (isolation_forest_v1.pkl)**
+   - **Propósito**: Detección de anomalías no supervisada
+   - **Características principales**:
+     - Detecta patrones inusuales en los datos
+     - Útil para encontrar valores atípicos multivariados
+     - Funciona bien con datos no etiquetados
+   - **Uso**: Detección de patrones inusuales en transacciones
+
+3. **Anomaly Artifacts (anomalies_artifacts_v1.pkl)**
+   - **Contenido**: Metadatos y configuraciones para la detección de anomalías
+   - **Incluye**:
+     - Umbrales de clasificación
+     - Mapeos de características
+     - Configuraciones de preprocesamiento
+
+4. **Model Artifacts (model_artifacts_v1.pkl)**
+   - **Contenido**: Recursos adicionales para los modelos
+   - **Puede incluir**:
+     - Codificadores de características
+     - Escaladores
+     - Otras transformaciones de datos
+
+### Flujo de Procesamiento
+
+1. **Carga de Datos**:
+   - Se cargan las transacciones y propiedades desde la base de datos
+   - Se extraen características relevantes para el análisis
+
+2. **Preprocesamiento**:
+   - Normalización de datos
+   - Codificación de variables categóricas
+   - Aplicación de transformaciones necesarias
+
+3. **Evaluación de Modelos**:
+   - Cada modelo se ejecuta sobre los datos preprocesados
+   - Se generan puntuaciones de anomalía
+   - Se aplican umbrales para la clasificación final
+
+4. **Consolidación de Resultados**:
+   - Se combinan los resultados de los diferentes modelos
+   - Se generan explicaciones para las anomalías detectadas
+   - Se registran los hallazgos en la base de datos
+
+### Consideraciones de Implementación
+
+- **Versionado**: Los modelos están versionados (v1) para permitir actualizaciones controladas
+- **Desempeño**: Los modelos están optimizados para procesamiento por lotes
+- **Monitoreo**: Se recomienda implementar monitoreo del rendimiento de los modelos
+- **Retroalimentación**: El sistema puede mejorar mediante la retroalimentación de los analistas sobre falsos positivos/negativos
+
+### Mantenimiento
+
+- **Actualización de Modelos**: Los modelos deben ser reevaluados periódicamente con datos recientes
+- **Registro de Cambios**: Mantener un registro de versiones y cambios en los modelos
+- **Backup**: Realizar copias de seguridad periódicas de los modelos
