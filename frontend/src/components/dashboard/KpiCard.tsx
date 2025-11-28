@@ -13,11 +13,27 @@ interface KpiCardProps {
   intent?: "default" | "success" | "warning" | "danger";
 }
 
-const intentClasses: Record<NonNullable<KpiCardProps["intent"]>, string> = {
-  default: "bg-slate-50 text-slate-700",
-  success: "bg-emerald-50 text-emerald-700",
-  warning: "bg-amber-50 text-amber-700",
-  danger: "bg-rose-50 text-rose-700",
+const intentClasses: Record<NonNullable<KpiCardProps["intent"]>, { bg: string; icon: string; border: string }> = {
+  default: {
+    bg: "bg-[var(--gray-50)]",
+    icon: "text-[var(--gray-700)]",
+    border: "border-[var(--gray-200)]",
+  },
+  success: {
+    bg: "bg-[var(--success-50)]",
+    icon: "text-[var(--success-700)]",
+    border: "border-[var(--success-200)]",
+  },
+  warning: {
+    bg: "bg-[var(--warning-50)]",
+    icon: "text-[var(--warning-700)]",
+    border: "border-[var(--warning-200)]",
+  },
+  danger: {
+    bg: "bg-[var(--danger-50)]",
+    icon: "text-[var(--danger-700)]",
+    border: "border-[var(--danger-200)]",
+  },
 };
 
 export function KpiCard({
@@ -29,27 +45,45 @@ export function KpiCard({
   iconName,
   intent = "default",
 }: KpiCardProps) {
+  const classes = intentClasses[intent];
+
   return (
-    <article className="bg-white rounded-xl shadow-sm border border-slate-200/70 p-4 flex flex-col gap-3">
+    <article className="bg-white rounded-xl shadow-[var(--shadow-sm)] border border-[var(--border-color)] p-5 flex flex-col gap-4 transition-all duration-200 hover:shadow-[var(--shadow-md)] hover:border-[var(--border-color-hover)] group">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+        <div className="flex-1">
+          <p className="text-xs font-medium text-[var(--gray-600)] uppercase tracking-wide mb-2">
             {label}
           </p>
-          <p className="mt-2 text-2xl font-semibold text-slate-900">{value}</p>
-          {helper && <p className="mt-1 text-xs text-slate-500">{helper}</p>}
+          <p className="text-3xl font-bold text-[var(--gray-900)] tracking-tight">
+            {value}
+          </p>
+          {helper && (
+            <p className="mt-1.5 text-xs text-[var(--gray-600)] leading-relaxed">
+              {helper}
+            </p>
+          )}
         </div>
         <div
-          className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${intentClasses[intent]}`}
+          className={`
+            inline-flex h-12 w-12 items-center justify-center rounded-xl border
+            ${classes.bg} ${classes.border}
+            transition-transform duration-200 group-hover:scale-110
+          `}
         >
-          <Icon name={iconName} className="h-5 w-5" />
+          <Icon name={iconName} className={`h-6 w-6 ${classes.icon}`} />
         </div>
       </div>
       {(trendLabel || trendValue) && (
-        <p className="mt-1 text-xs text-slate-500">
-          {trendLabel && <span>{trendLabel} </span>}
-          {trendValue && <span className="font-medium text-slate-800">{trendValue}</span>}
-        </p>
+        <div className="pt-3 border-t border-[var(--border-color)]">
+          <p className="text-xs text-[var(--gray-600)]">
+            {trendLabel && <span className="font-medium">{trendLabel} </span>}
+            {trendValue && (
+              <span className="font-semibold text-[var(--igac-blue-700)]">
+                {trendValue}
+              </span>
+            )}
+          </p>
+        </div>
       )}
     </article>
   );

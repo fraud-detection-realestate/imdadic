@@ -34,18 +34,13 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <nav className="hidden md:flex gap-8">
-            {NAVIGATION_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-slate-700 hover:text-blue-900 transition-colors relative group"
-              >
-                {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-900 transition-all group-hover:w-full" />
-              </Link>
-            ))}
-          </nav>
+          
+          {/* Logos Institucionales */}
+          <div className="hidden md:flex items-center gap-6">
+            <Image src="/gobierno-colombia-logo.png" alt="Gobierno de Colombia" width={60} height={60} className="rounded-lg object-contain hover:scale-110 transition-transform cursor-pointer" />
+            <div className="w-px h-12 bg-slate-300/50" />
+            <Image src="/programa-logo.png" alt="Programa" width={60} height={60} className="rounded-lg object-contain hover:scale-110 transition-transform cursor-pointer" />
+          </div>
         </div>
       </header>
 

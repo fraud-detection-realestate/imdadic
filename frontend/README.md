@@ -14,12 +14,12 @@ Aplicación web moderna para el monitoreo y análisis de anomalías en el mercad
 
 - **Framework**: Next.js 14 (App Router) + React 18
 - **Lenguaje**: TypeScript
-- **Estilos**: Tailwind CSS + CSS Modules
-- **Visualización de datos**: Recharts, Deck.gl, Mapbox GL
-- **Manejo de estado**: React Query + Zustand
+- **Estilos**: Tailwind CSS
+- **Visualización de datos**: Recharts (gráficos), Leaflet (mapas)
+- **Mapas**: React-Leaflet + OpenStreetMap
+- **Backend Integration**: FastAPI + Google Gemini
 - **UI/UX**: Componentes personalizados con accesibilidad
-- **Formularios**: React Hook Form + Zod
-- **Rutas**: Next.js App Router
+- **Rutas**: Next.js App Router con Server Actions
 - **Tipado**: TypeScript estricto
 
 ---
@@ -102,42 +102,44 @@ La aplicación utiliza Tailwind CSS con las siguientes configuraciones principal
 ```
 frontend/
 ├── app/                    # Rutas de la aplicación (App Router)
-│   ├── (auth)/             # Rutas de autenticación
+│   ├── actions/            # Server Actions
+│   │   ├── dashboard.ts    # Acciones para datos del dashboard
+│   │   └── map.ts          # Acciones para datos del mapa
 │   ├── api/                # API routes (Next.js)
-│   │   └── chat/           # Endpoints del chat
-│   ├── dashboard/          # Dashboard ejecutivo
-│   ├── map/                # Mapa interactivo
+│   │   └── chat/           # Proxy para chat con backend
+│   ├── dashboard/          # Dashboard ejecutivo con datos reales
+│   ├── maps/               # Mapa interactivo geoespacial
 │   ├── chat/               # Interfaz de chat con IA
+│   ├── statistics/         # Estadísticas avanzadas
 │   ├── anomaly/            # Detalles de anomalías
 │   ├── globals.css         # Estilos globales
 │   └── layout.tsx          # Layout principal
 │
 ├── src/
 │   ├── components/         # Componentes reutilizables
-│   │   ├── ui/             # Componentes UI básicos (Button, Card, etc.)
+│   │   ├── shared/         # Componentes compartidos (Card, Icon)
 │   │   ├── dashboard/      # Componentes del dashboard
-│   │   ├── map/            # Componentes de mapas
-│   │   └── chat/           # Componentes del chat
+│   │   ├── map/            # Componentes de mapas (Leaflet)
+│   │   ├── statistics/     # Componentes de estadísticas
+│   │   ├── chat/           # Componentes del chat
+│   │   └── widgets/        # Widgets (ChatWidget)
 │   │
-│   ├── lib/                # Utilidades y configuraciones
-│   │   ├── api/            # Clientes API
-│   │   ├── utils/          # Funciones de utilidad
-│   │   └── constants/      # Constantes de la aplicación
-│   │
-│   ├── hooks/              # Hooks personalizados
-│   ├── store/              # Estado global (Zustand)
 │   ├── types/              # Tipos TypeScript
+│   │   └── anomaly.ts      # Tipos de anomalías
+│   │
 │   └── styles/             # Estilos globales y temas
 │
-├── public/                # Archivos estáticos
-│   ├── images/            # Imágenes
-│   └── icons/             # Íconos SVG
+├── files/                  # Archivos de datos
+│   └── tablero_riesgos.csv # Datos de anomalías
 │
-├── tests/                 # Pruebas
-├── .eslintrc.js           # Configuración ESLint
-├── .prettierrc           # Configuración Prettier
-├── tailwind.config.js     # Configuración Tailwind
-├── tsconfig.json          # Configuración TypeScript
+├── public/                 # Archivos estáticos
+│   ├── images/             # Imágenes
+│   └── icons/              # Íconos SVG
+│
+├── tests/                  # Pruebas
+├── .eslintrc.js            # Configuración ESLint
+├── tailwind.config.js      # Configuración Tailwind
+├── tsconfig.json           # Configuración TypeScript
 └── package.json
 ```
 
@@ -160,11 +162,52 @@ frontend/
 
 ### Componentes clave
 
-- **Dashboard**: Visualización de KPIs, gráficos y tendencias
-- **Mapa**: Visualización geoespacial con filtros interactivos
-- **Chat**: Interfaz conversacional con agente IA
+- **Dashboard**: Visualización de KPIs, gráficos y tendencias con datos reales del CSV
+- **Mapa Geoespacial**: Visualización interactiva con Leaflet y filtros avanzados
+- **Chat**: Interfaz conversacional con agente IA (Google Gemini)
+- **Estadísticas**: Análisis avanzado con gráficos de tendencias y distribuciones
 - **Filtros**: Componentes reutilizables para filtrar datos
 - **Tarjetas**: Presentación de datos en tarjetas interactivas
+
+---
+
+
+### Integración de Datos Reales (CSV)
+
+Se ha integrado el archivo `tablero_riesgos.csv` en el dashboard y las estadísticas:
+
+- **Server Actions**: `src/app/actions/dashboard.ts` procesa y agrega datos del CSV
+- **Dashboard**: Muestra KPIs, tendencias temporales y distribución por severidad
+- **Estadísticas**: Gráficos de evolución temporal, distribución por tipo y comparativo geográfico
+
+### Chat con Backend
+
+El chat está completamente integrado con el backend FastAPI:
+
+- **API Route**: `/api/chat` actúa como proxy hacia el backend
+- **Backend**: `http://127.0.0.1:8000/api/v1/chat` (Google Gemini)
+- **Componentes**: Tanto `/chat` como el `ChatWidget` usan la API real
+
+### Mapa Geoespacial Interactivo
+
+Implementación completa de mapa interactivo en `/maps`:
+
+**Tecnologías:**
+- React-Leaflet para renderizado de mapas
+- OpenStreetMap como proveedor de tiles (sin API key)
+- Marcadores personalizados por severidad
+
+**Características:**
+- Visualización de anomalías con coordenadas geográficas
+- Popups informativos con detalles de cada anomalía
+- Filtros por ciudad, severidad y tipo
+- Leyenda con estadísticas en tiempo real
+- Diseño responsivo y accesible
+
+**Datos:**
+- Mapeo de coordenadas para principales ciudades colombianas
+- Procesamiento de hasta 5000 puntos del CSV
+- Clasificación por severidad basada en score
 
 ---
 
@@ -313,13 +356,3 @@ Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 ---
 
-## Cómo contribuir
-
-- Asegúrate de ejecutar tests y linter antes de abrir PR.
-- Sigue las convenciones de commit (Conventional Commits).
-
-Si necesitas que genere una guía automática de componentes (Storybook) o ejemplos de integración para endpoints del backend, puedo agregarlo en otra PR.
-
----
-
-> Si quieres, puedo generar un `CONTRIBUTING.md` específico para el frontend o añadir ejemplos concretos de llamadas a la API y mocks para pruebas locales. ¿Te gustaría que haga eso ahora?
