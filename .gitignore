@@ -44,3 +44,9 @@ docker-compose.override.yml
 
 # PyCharm
 .idea/
+
+# frontend
+files/*.csv
+
+# files
+artifacts_inspection.txt

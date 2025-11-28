@@ -6,6 +6,8 @@ export type IconName = 'chart' | 'map' | 'clock' | 'lightbulb' | 'target' | 'che
 interface IconProps {
   name: IconName;
   className?: string;
+  ariaLabel?: string;
+  title?: string;
 }
 
 const iconPaths: Record<IconName, string> = {
@@ -19,20 +21,37 @@ const iconPaths: Record<IconName, string> = {
   database: "M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4",
 };
 
-export function Icon({ name, className = "w-8 h-8" }: IconProps) {
+const iconLabels: Record<IconName, string> = {
+  chart: "Gráfico",
+  map: "Mapa",
+  clock: "Reloj",
+  lightbulb: "Idea",
+  target: "Objetivo",
+  checklist: "Lista de verificación",
+  trending: "Tendencia",
+  database: "Base de datos",
+};
+
+export function Icon({ name, className = "w-8 h-8", ariaLabel, title }: IconProps) {
+  const label = ariaLabel || iconLabels[name];
+  const showTitle = title || label;
+
   return (
-    <svg 
-      className={className} 
-      fill="none" 
-      stroke="currentColor" 
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label={label}
     >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d={iconPaths[name]} 
+      {showTitle && <title>{showTitle}</title>}
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d={iconPaths[name]}
       />
     </svg>
   );

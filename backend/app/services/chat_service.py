@@ -69,6 +69,5 @@ class GeminiService:
 
 
 gemini_service = GeminiService(
-    api_key=settings.GEMINI_API_KEY,
-    system_prompt=settings.SYSTEM_PROMPT
+    api_key=settings.GEMINI_API_KEY, system_prompt=settings.SYSTEM_PROMPT
 )
