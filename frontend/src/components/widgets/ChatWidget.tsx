@@ -21,7 +21,7 @@ interface SendingState {
 const INITIAL_MESSAGE: ChatMessage = {
   id: "welcome-widget-1",
   role: "assistant",
-  content: "¡Hola! Soy el asistente IMDADIC. ¿En qué puedo ayudarte hoy?",
+  content: "¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?",
   timestamp: new Date(),
 };
 

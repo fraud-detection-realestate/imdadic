@@ -7,7 +7,7 @@ export const SITE_CONFIG = {
   name: "IGAC",
   fullName: "Instituto Geográfico Agustín Codazzi",
   subtitle: "Sistema de Monitoreo Inmobiliario",
-  description: "Plataforma avanzada para el análisis de más de 34 millones de transacciones inmobiliarias distribuidas en 1,105 municipios entre 2015 y 2025",
+  description: "Garantizando la transparencia del mercado inmobiliario en Colombia a través de análisis avanzado de datos y detección inteligente de anomalías en transacciones de propiedad raíz",
   location: "Bogotá D.C., Colombia",
   year: "2024",
 } as const;
@@ -135,15 +135,15 @@ export const DATASET_CONTENT = {
 } as const;
 
 export const CTA_SECTION = {
-  title: "¿Listo para explorar los datos?",
-  description: "Accede a nuestro sistema de análisis y visualización de transacciones inmobiliarias",
+  title: "Transformando Datos en Inteligencia Territorial",
+  description: "Acceda a la plataforma más avanzada de análisis inmobiliario en Colombia. Más de 34 millones de transacciones, visualización geoespacial en tiempo real y detección inteligente de anomalías.",
   buttons: {
     primary: {
-      label: "Ir al Dashboard",
+      label: "Acceder al Sistema",
       href: "/dashboard",
     },
     secondary: {
-      label: "Ver Mapas",
+      label: "Explorar Mapas Interactivos",
       href: "/maps",
     },
   },

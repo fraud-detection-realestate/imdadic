@@ -53,6 +53,8 @@ Start the development server with hot-reload enabled:
 
 ```bash
 uvicorn app.main:app --reload
+
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
@@ -69,19 +71,19 @@ imdadic/
 │   │   ├── api/
 │   │   │   └── v1/
 │   │   │       ├── chat.py
-│   │   │       └── predictions.py  [NEW]
+│   │   │       └── predictions.py
 │   │   ├── core/
 │   │   │   └── config.py
 │   │   ├── models_ml/
-│   │   │   └── model_loader.py  [NEW]
+│   │   │   └── model_loader.py
 │   │   ├── schemas/
 │   │   │   ├── chat.py
-│   │   │   └── prediction.py  [NEW]
+│   │   │   └── prediction.py
 │   │   ├── services/
 │   │   │   ├── chat_service.py
-│   │   │   └── prediction_service.py  [NEW]
-│   │   └── main.py  [MODIFIED]
-│   └── requirements.txt  [MODIFIED]
+│   │   │   └── prediction_service.py
+│   │   └── main.py
+│   └── requirements.txt
 └── ml_models/
     └── v1/
         ├── lgbm_classifier_balanced_v1.pkl
@@ -104,3 +106,11 @@ The backend follows a layered architecture:
 ### Chat
 
 - `POST /api/v1/chat`: Endpoint for the AI assistant. Receives a user message and returns a generated response.
+
+## Documentacion de Backend
+
+Inicializacion y creación de la base de datos
+
+```bash
+python -m app.core.init_db
+```

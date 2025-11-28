@@ -3,67 +3,100 @@
 import type { AnomalyRecord } from "@/types/anomaly";
 import Link from "next/link";
 import { Card } from "@/components/shared/Card";
+import { Badge } from "@/components/shared/Badge";
+import type { BadgeVariant } from "@/components/shared/Badge";
 
 interface RecentAnomaliesTableProps {
   anomalies: AnomalyRecord[];
 }
 
-const severityColors: Record<AnomalyRecord["severidad"], string> = {
-  alta: "bg-rose-50 text-rose-700 border-rose-100",
-  media: "bg-amber-50 text-amber-700 border-amber-100",
-  baja: "bg-emerald-50 text-emerald-700 border-emerald-100",
+const severityVariants: Record<AnomalyRecord["severidad"], BadgeVariant> = {
+  alta: "danger",
+  media: "warning",
+  baja: "success",
+};
+
+const severityLabels: Record<AnomalyRecord["severidad"], string> = {
+  alta: "ALTA",
+  media: "MEDIA",
+  baja: "BAJA",
 };
 
 export function RecentAnomaliesTable({ anomalies }: RecentAnomaliesTableProps) {
   return (
     <Card
       title="Anomalías recientes"
-      subtitle="Últimas transacciones marcadas por los modelos. Datos mock a la espera de integración con backend."
+      subtitle="Últimas transacciones marcadas por los modelos. Datos reales del sistema."
       className="h-full"
     >
-      <div className="overflow-x-auto -mx-4 sm:mx-0">
-        <table className="min-w-full text-xs sm:text-sm">
+      <div className="overflow-x-auto -mx-6">
+        <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50/80">
-              <th className="py-3 px-4 text-left font-medium text-slate-500">ID</th>
-              <th className="py-3 px-4 text-left font-medium text-slate-500">Ciudad</th>
-              <th className="py-3 px-4 text-left font-medium text-slate-500">Severidad</th>
-              <th className="py-3 px-4 text-left font-medium text-slate-500">Tipo</th>
-              <th className="py-3 px-4 text-left font-medium text-slate-500">Fecha</th>
-              <th className="py-3 px-4 text-right font-medium text-slate-500">Valor</th>
-              <th className="py-3 px-4 text-center font-medium text-slate-500">Acciones</th>
+            <tr className="border-b border-[var(--border-color)] bg-[var(--gray-50)]">
+              <th className="py-3.5 px-4 text-left font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                ID
+              </th>
+              <th className="py-3.5 px-4 text-left font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Ciudad
+              </th>
+              <th className="py-3.5 px-4 text-left font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Severidad
+              </th>
+              <th className="py-3.5 px-4 text-left font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Tipo
+              </th>
+              <th className="py-3.5 px-4 text-left font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Fecha
+              </th>
+              <th className="py-3.5 px-4 text-right font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Valor
+              </th>
+              <th className="py-3.5 px-4 text-center font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody>
             {anomalies.map((a) => (
-              <tr key={a.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/60">
-                <td className="py-2.5 px-4 font-mono text-[11px] sm:text-xs text-slate-700">{a.id}</td>
-                <td className="py-2.5 px-4 text-slate-700">
-                  <span className="font-medium">{a.ciudad}</span>
-                  <span className="text-slate-400 text-[11px] sm:text-xs"> · {a.municipio}</span>
+              <tr
+                key={a.id}
+                className="border-b border-[var(--border-color)] last:border-0 hover:bg-[var(--gray-50)] transition-colors duration-150"
+              >
+                <td className="py-3.5 px-4 font-mono text-xs text-[var(--gray-700)]">
+                  {a.id}
                 </td>
-                <td className="py-2.5 px-4">
-                  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] sm:text-xs font-medium ${severityColors[a.severidad]}`}>
-                    {a.severidad.toUpperCase()}
-                  </span>
+                <td className="py-3.5 px-4 text-[var(--gray-900)]">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium">{a.ciudad}</span>
+                    <span className="text-xs text-[var(--gray-600)]">{a.municipio}</span>
+                  </div>
                 </td>
-                <td className="py-2.5 px-4 text-slate-700 capitalize">
+                <td className="py-3.5 px-4">
+                  <Badge variant={severityVariants[a.severidad]} size="sm">
+                    {severityLabels[a.severidad]}
+                  </Badge>
+                </td>
+                <td className="py-3.5 px-4 text-[var(--gray-700)] capitalize">
                   {a.tipo.replace("_", " ")}
                 </td>
-                <td className="py-2.5 px-4 text-slate-600">
-                  {new Date(a.fecha).toLocaleDateString("es-CO")}
+                <td className="py-3.5 px-4 text-[var(--gray-600)] text-sm">
+                  {new Date(a.fecha).toLocaleDateString("es-CO", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </td>
-                <td className="py-2.5 px-4 text-right text-slate-700">
+                <td className="py-3.5 px-4 text-right font-semibold text-[var(--gray-900)]">
                   {a.valorTransaccion.toLocaleString("es-CO", {
                     style: "currency",
                     currency: "COP",
                     maximumFractionDigits: 0,
                   })}
                 </td>
-                <td className="py-2.5 px-4 text-center">
+                <td className="py-3.5 px-4 text-center">
                   <Link
                     href={`/anomaly/${a.id}`}
-                    className="inline-flex items-center justify-center rounded-lg bg-slate-900 text-white text-[11px] sm:text-xs px-3 py-1 hover:bg-slate-800 transition-colors"
+                    className="inline-flex items-center justify-center rounded-lg bg-gradient-to-br from-[var(--igac-blue-700)] to-[var(--igac-blue-800)] text-white text-xs font-medium px-4 py-2 hover:from-[var(--igac-blue-800)] hover:to-[var(--igac-blue-900)] transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     Ver detalle
                   </Link>
@@ -73,6 +106,13 @@ export function RecentAnomaliesTable({ anomalies }: RecentAnomaliesTableProps) {
           </tbody>
         </table>
       </div>
+      {anomalies.length === 0 && (
+        <div className="py-12 text-center">
+          <p className="text-[var(--gray-600)] text-sm">
+            No se encontraron anomalías con los filtros seleccionados.
+          </p>
+        </div>
+      )}
     </Card>
   );
 }
