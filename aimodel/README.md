@@ -1,1 +1,0 @@
-# Documentacion de Modelo IA

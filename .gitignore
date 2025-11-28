@@ -47,3 +47,6 @@ docker-compose.override.yml
 
 # frontend
 files/*.csv
+
+# files
+artifacts_inspection.txt
