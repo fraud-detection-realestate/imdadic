@@ -4,6 +4,8 @@ from sqlalchemy import text
 from app.api.v1.chat import router as chat_router
 from app.core.config import settings
 from app.core.database import engine
+from app.api.v1.predictions import router as predictions_router
+from app.models_ml.model_loader import ml_models
 
 
 def check_database_connection():
@@ -38,6 +40,11 @@ def create_app() -> FastAPI:
     app.include_router(
         predictions_router, prefix="/api/v1/predictions", tags=["Predictions"]
     )
+
+    @app.on_event("startup")
+    async def startup_event():
+        """Load ML models on application startup"""
+        ml_models.load_models()
 
     @app.get("/")
     async def root():
