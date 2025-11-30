@@ -8,9 +8,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     DEBUG: bool = True
 
-    SYSTEM_PROMPT: str = (
-        "Eres un asistente experto en análisis inmobiliario y detección de anomalías."
-    )
+    SYSTEM_PROMPT: str | None = None  # Se cargará desde knowledge_base
 
     # Database credentials
     DB_NAME: str

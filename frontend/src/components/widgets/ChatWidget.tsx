@@ -63,8 +63,8 @@ function MessageBubble({ message }: { message: ChatMessage }) {
     >
       <div
         className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg shadow-sm ${isUser
-            ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
-            : "bg-gradient-to-br from-blue-600 to-blue-700"
+          ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
+          : "bg-gradient-to-br from-blue-600 to-blue-700"
           }`}
       >
         <Icon name={isUser ? "target" : "lightbulb"} className="h-3.5 w-3.5 text-white" />
@@ -72,8 +72,8 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} max-w-[75%]`}>
         <div
           className={`rounded-xl px-3 py-2 shadow-sm ${isUser
-              ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-900"
-              : "border border-slate-200 bg-white text-slate-900"
+            ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-900"
+            : "border border-slate-200 bg-white text-slate-900"
             }`}
         >
           <p className="text-xs leading-relaxed">{message.content}</p>

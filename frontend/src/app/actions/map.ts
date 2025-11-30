@@ -56,12 +56,12 @@ export interface MapData {
 function getCoordinates(municipio: string, departamento: string): [number, number] | null {
   const cleanMunicipio = municipio.toUpperCase().trim();
   const cleanDepartamento = departamento.toUpperCase().trim();
-  
+
   // Try exact match first
   if (COORDINATES_MAP[cleanMunicipio]) {
     return COORDINATES_MAP[cleanMunicipio];
   }
-  
+
   // Try department match
   if (COORDINATES_MAP[cleanDepartamento]) {
     // Add small random offset to avoid exact overlap
@@ -71,7 +71,7 @@ function getCoordinates(municipio: string, departamento: string): [number, numbe
       lng + (Math.random() - 0.5) * 0.1
     ];
   }
-  
+
   // Default to Colombia center with random offset
   return [
     4.5709 + (Math.random() - 0.5) * 2,
@@ -83,24 +83,24 @@ export async function getMapData(): Promise<MapData> {
   try {
     const fileContent = await fs.promises.readFile(CSV_PATH, "utf-8");
     const lines = fileContent.split("\n");
-    
+
     const points: MapPoint[] = [];
     let alta = 0, media = 0, baja = 0;
-    
+
     // Skip header, process data
     for (let i = 1; i < Math.min(lines.length, 5000); i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      
+
       const values = line.split(",");
       if (values.length < 10) continue;
-      
+
       const municipio = values[2] || "DESCONOCIDO";
       const departamento = values[1] || "DESCONOCIDO";
       const year = values[4] || "2024";
       const score = parseFloat(values[8]) || 0;
       const tipoAnomalia = values[9] || "desconocido";
-      
+
       // Determine severity
       let severity: "alta" | "media" | "baja" = "baja";
       if (score < -0.05) {
@@ -112,10 +112,10 @@ export async function getMapData(): Promise<MapData> {
       } else {
         baja++;
       }
-      
+
       const coords = getCoordinates(municipio, departamento);
       if (!coords) continue;
-      
+
       points.push({
         id: `point-${i}`,
         lat: coords[0],
@@ -128,7 +128,7 @@ export async function getMapData(): Promise<MapData> {
         year,
       });
     }
-    
+
     return {
       points,
       stats: {

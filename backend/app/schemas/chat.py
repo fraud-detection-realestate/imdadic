@@ -13,13 +13,15 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: Optional[str] = None
-    user_id: str
+    session_id: Optional[str] = None
+    user_id: Optional[str] = None  # Opcional para usuarios anónimos
+    conversation_id: Optional[str] = None  # Mantenemos por compatibilidad hacia atrás
 
 
 class ChatResponse(BaseModel):
     response: str
-    conversation_id: str
+    session_id: Optional[str] = None
+    conversation_id: Optional[str] = None
 
 
 class ConversationResponse(BaseModel):

@@ -8,6 +8,7 @@ from app.models import Conversation, Message
 from app.models.user import User
 from datetime import datetime
 from typing import List, Optional
+import uuid
 
 
 router = APIRouter()
@@ -42,9 +43,48 @@ async def get_all_users(db: Session = Depends(get_db)):
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(req: ChatRequest, db: Session = Depends(get_db)):
-    # Obtener o crear conversación
-    conversation: Optional[Conversation] = None
+    if not req.message or not req.message.strip():
+        raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío")
 
+    # --- FLUJO 1: SESIÓN ANÓNIMA (EN MEMORIA) ---
+    # Si hay session_id o NO hay user_id, asumimos sesión anónima
+    if req.session_id or not req.user_id:
+        # Generar session_id si no existe
+        session_id = req.session_id or str(uuid.uuid4())
+
+        try:
+            # Usar servicio con session_id (gestiona historial en memoria)
+            response_text = gemini_service.generate_response(
+                prompt=req.message, session_id=session_id
+            )
+
+            return ChatResponse(response=response_text, session_id=session_id)
+        except Exception as e:
+            print(f"Error en chat anónimo: {e}")
+            raise HTTPException(
+                status_code=503, detail="El servicio de IA no está disponible"
+            )
+
+    # --- FLUJO 2: USUARIO REGISTRADO (BASE DE DATOS) ---
+    # Si hay user_id, usamos el flujo persistente original
+
+    # 1. Obtener o crear usuario (con manejo de concurrencia)
+    user = db.query(User).filter(User.id == req.user_id).first()
+    if not user:
+        try:
+            user = User(id=req.user_id, username=f"user_{req.user_id}")
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        except Exception:
+            # Si falla (ej. race condition), intentamos obtenerlo de nuevo
+            db.rollback()
+            user = db.query(User).filter(User.id == req.user_id).first()
+            if not user:
+                raise HTTPException(status_code=500, detail="Error creando usuario")
+
+    # 2. Obtener o crear conversación
+    conversation: Optional[Conversation] = None
     if req.conversation_id:
         conversation = (
             db.query(Conversation)
@@ -58,39 +98,57 @@ async def chat_endpoint(req: ChatRequest, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(conversation)
 
-    # Obtener historial de mensajes
+    # 3. Obtener historial (limitado a últimos 20 mensajes para eficiencia)
     messages = (
         db.query(Message)
         .filter(Message.conversation_id == conversation.id)
-        .order_by(Message.created_at)
+        .order_by(Message.created_at.desc())
+        .limit(20)
         .all()
     )
+    # Reordenar cronológicamente para el prompt
+    messages.reverse()
 
     history_dicts = [{"role": msg.role, "content": msg.content} for msg in messages]
 
-    # Generar respuesta
-    response_text = gemini_service.generate_response(req.message, history_dicts)  # type: ignore[attr-defined]
+    # 4. Generar respuesta con Gemini
+    try:
+        response_text = gemini_service.generate_response(
+            req.message, history=history_dicts
+        )
+    except Exception as e:
+        print(f"Error externo Gemini: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail="El servicio de IA no está disponible momentáneamente",
+        )
 
-    # Guardar mensaje del usuario
-    user_message = Message(
-        conversation_id=conversation.id, role="user", content=req.message
-    )
-    db.add(user_message)
+    # 5. Guardar interacción en una sola transacción atómica
+    try:
+        # Guardar mensaje del usuario
+        user_message = Message(
+            conversation_id=conversation.id, role="user", content=req.message
+        )
+        db.add(user_message)
 
-    # Guardar respuesta del asistente
-    assistant_message = Message(
-        conversation_id=conversation.id, role="assistant", content=response_text
-    )
-    db.add(assistant_message)
+        # Guardar respuesta del asistente
+        assistant_message = Message(
+            conversation_id=conversation.id, role="assistant", content=response_text
+        )
+        db.add(assistant_message)
 
-    # Actualizar timestamp de conversación
-    conversation.updated_at = datetime.utcnow()  # type: ignore[attr-defined]
+        # Actualizar timestamp de conversación
+        conversation.updated_at = datetime.utcnow()  # type: ignore[attr-defined]
 
-    db.commit()
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"Error guardando mensajes: {e}")
+        raise HTTPException(status_code=500, detail="Error guardando la conversación")
 
     return ChatResponse(
         response=response_text,
-        conversation_id=str(conversation.id),  # Convertir a string explícitamente
+        conversation_id=str(conversation.id),
     )
 
 

@@ -41,16 +41,16 @@ export async function getDashboardData(): Promise<DashboardData> {
     const headers = lines[0].split(",");
 
     const records: RawCsvRecord[] = [];
-    
+
     // Parse CSV (skipping header, handling basic parsing)
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      
+
       // Simple split by comma (assuming no commas in values for this specific dataset based on inspection)
       // For more robust parsing, a library or regex would be better, but this fits the "simple" requirement.
       const values = line.split(",");
-      
+
       if (values.length >= headers.length) {
         records.push({
           VALOR_CONSTANTE_2024: values[0],
@@ -89,7 +89,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     // The mock had "Alta", "Media", "Baja".
     // Let's infer severity from score: < -0.05 High (Alta), -0.05 to -0.01 Medium (Media), > -0.01 Low (Baja)
     // Note: Scores are negative in the CSV sample.
-    
+
     let alta = 0;
     let media = 0;
     let baja = 0;
@@ -117,7 +117,7 @@ export async function getDashboardData(): Promise<DashboardData> {
         cityCounts.set(city, (cityCounts.get(city) || 0) + 1);
       }
     });
-    
+
     let ciudadTop = "Desconocida";
     let maxCount = 0;
     cityCounts.forEach((count, city) => {
@@ -156,7 +156,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     // Checking CSV sample: ES_ANOMALIA seems to be 1 for all shown records.
     // Let's assume the CSV is just anomalies for now or check ES_ANOMALIA column.
     // If ES_ANOMALIA is 1, it's an anomaly.
-    
+
     const realAnomalies = records.filter(r => r.ES_ANOMALIA === "1").length;
     const totalRecords = records.length;
     const tasa = totalRecords > 0 ? ((realAnomalies / totalRecords) * 100).toFixed(2) + "%" : "0%";
@@ -169,7 +169,7 @@ export async function getDashboardData(): Promise<DashboardData> {
         deptCounts.set(dept, (deptCounts.get(dept) || 0) + 1);
       }
     });
-    
+
     const distribucionGeografica = Array.from(deptCounts.entries())
       .map(([nombre, valor]) => ({ nombre, valor }))
       .sort((a, b) => b.valor - a.valor)
