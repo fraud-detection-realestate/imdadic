@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
 import { useChatStore } from '@/store/chatStore';
+import ReactMarkdown from 'react-markdown';
 
 export default function ChatWidget() {
     const {
@@ -101,8 +102,8 @@ export default function ChatWidget() {
                             <div>
                                 <h3 className="font-bold text-sm">Asistente IMDADIC</h3>
                                 <p className="text-xs text-blue-100 flex items-center gap-1">
-                                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                    En línea
+                                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse">
+                                    </span> En línea
                                 </p>
                             </div>
                         </div>
@@ -142,21 +143,42 @@ export default function ChatWidget() {
 
                                 <div
                                     className={`
-                    max-w-[80%] p-3 rounded-2xl text-sm shadow-sm
-                    ${msg.role === 'user'
+                                    max-w-[85%] p-3 rounded-2xl text-sm shadow-sm
+                                    ${msg.role === 'user'
                                             ? 'bg-blue-600 text-white rounded-tr-none'
                                             : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-tl-none'
                                         }
-                  `}
+                                  `}
                                 >
-                                    <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                                    {msg.role === 'assistant' ? (
+                                        <div className="markdown-body">
+                                            <ReactMarkdown
+                                                components={{
+                                                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0 leading-relaxed" {...props} />,
+                                                    strong: ({ node, ...props }) => <span className="font-bold text-blue-700 dark:text-blue-400" {...props} />,
+                                                    ul: ({ node, ...props }) => <ul className="list-disc ml-4 mb-2 space-y-1" {...props} />,
+                                                    li: ({ node, ...props }) => <li className="leading-relaxed pl-1" {...props} />,
+                                                    code: ({ node, ...props }) => (
+                                                        <code className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-xs font-mono text-red-500 dark:text-red-400" {...props} />
+                                                    ),
+                                                }}
+                                            >
+                                                {/* Limpieza de caracteres escapados */}
+                                                {msg.content.replace(/\\/g, '')}
+                                            </ReactMarkdown>
+                                        </div>
+                                    ) : (
+                                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                                    )}
                                 </div>
 
-                                {msg.role === 'user' && (
-                                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
-                                        <User size={16} className="text-slate-600 dark:text-slate-300" />
-                                    </div>
-                                )}
+                                {
+                                    msg.role === 'user' && (
+                                        <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
+                                            <User size={16} className="text-slate-600 dark:text-slate-300" />
+                                        </div>
+                                    )
+                                }
                             </div>
                         ))}
 
@@ -203,7 +225,8 @@ export default function ChatWidget() {
                         </div>
                     </div>
                 </div>
-            )}
+            )
+            }
 
             {/* Botón Flotante (FAB) */}
             <button
@@ -219,6 +242,6 @@ export default function ChatWidget() {
             >
                 {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
             </button>
-        </div>
+        </div >
     );
 }

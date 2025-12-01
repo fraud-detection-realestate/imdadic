@@ -4,6 +4,8 @@
 
 Sistema para la detección y análisis de anomalías en transacciones inmobiliarias en Colombia.
 
+![<img>](/frontend/files/images/img_00.jpeg)
+
 ## 🚀 Características Principales
 
 - **Visualización Geoespacial**: Mapas interactivos con Deck.gl/Mapbox
@@ -137,12 +139,6 @@ Accede a `http://localhost:3000/chat` para:
 
 ## API Endpoints
 
-### Autenticación
-
-- `POST /api/v1/auth/login` - Iniciar sesión
-- `POST /api/v1/auth/refresh` - Refrescar token
-- `POST /api/v1/auth/logout` - Cerrar sesión
-
 ### Propiedades
 
 - `GET /api/v1/properties` - Listar propiedades (con paginación y filtros)
@@ -159,77 +155,8 @@ Accede a `http://localhost:3000/chat` para:
 
 - `GET /api/v1/dashboard/stats` - Estadísticas generales
 - `GET /api/v1/dashboard/kpis` - Indicadores clave
-- `GET /api/v1/dashboard/heatmap` - Datos GeoJSON para mapa
 
 Ver documentación completa en: `http://localhost:8000/docs`
-
-## Testing
-
-### Backend
-
-```bash
-# Ejecutar todos los tests
-cd backend
-pytest
-
-# Con coverage
-pytest --cov=app --cov-report=html
-
-# Solo tests unitarios
-pytest tests/unit/
-
-# Solo tests de integración
-pytest tests/integration/
-
-# Test específico
-pytest tests/integration/test_anomalies_api.py -v
-```
-
-### Frontend
-
-```bash
-cd frontend
-
-# Unit tests
-npm test
-
-# Con coverage
-npm test -- --coverage
-
-# E2E tests
-npm run test:e2e
-
-# Test específico
-npm test -- MapPropertyMap
-```
-
-## Deployment
-
-### Producción con Docker
-
-```bash
-# Build de imágenes
-docker-compose -f docker-compose.prod.yml build
-
-# Deploy
-docker-compose -f docker-compose.prod.yml up -d
-
-# Ver logs
-docker-compose -f docker-compose.prod.yml logs -f
-```
-
-Ver [docs/deployment.md](./docs/deployment.md) para instrucciones detalladas de deployment en producción.
-
-## Contribuir
-
-### Workflow de Desarrollo
-
-1. Crear rama desde `main`: `git checkout -b feature/descripcion`
-2. Hacer commits descriptivos siguiendo [Conventional Commits](https://www.conventionalcommits.org/)
-3. Ejecutar tests y linter antes de commit
-4. Push y crear Pull Request
-5. Esperar code review y aprobación
-6. Merge a `main`
 
 ### Convenciones de Código
 
@@ -275,6 +202,13 @@ docker-compose logs agent | grep -i "api key"
 - **Proyecto**: IMDADIC - Instituto de Monitoreo y Detección de Anomalías en Dinámica Inmobiliaria en Colombia
 - **Institución**: Instituto Geográfico Agustín Codazzi (IGAC)
 - **Repositorio**: [github.com/tu-organizacion/imdadic](https://github.com/tu-organizacion/imdadic)
+
+## Anexos de la Plataforma
+
+![<img>](/frontend/files/images/img_01.jpeg)
+![<img>](/frontend/files/images/img_02.jpeg)
+![<img>](/frontend/files/images/img_03.jpeg)
+![<img>](/frontend/files/images/img_04.jpeg)
 
 ## Autores
 

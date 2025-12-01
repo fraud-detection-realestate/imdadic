@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/shared/Icon";
+import ReactMarkdown from "react-markdown"; // <--- IMPORTANTE
 
 type Role = "user" | "assistant";
 type MessageStatus = "sending" | "sent" | "error";
@@ -90,14 +91,21 @@ const BEST_PRACTICES = [
   },
 ];
 
+// --- SIMULACIÓN DE STORE DE SESIÓN ---
+// En una app real, esto vendría de un contexto o store global (Zustand/Redux)
+let globalSessionId: string | null = null;
+
 async function sendMessageToAgent(prompt: string): Promise<string> {
   try {
-    const response = await fetch("/api/chat", {
+    const response = await fetch("http://127.0.0.1:8000/api/v1/chat", { // Ajusta la URL a tu backend real
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: prompt }),
+      body: JSON.stringify({
+        message: prompt,
+        session_id: globalSessionId // Enviar sesión actual
+      }),
     });
 
     if (!response.ok) {
@@ -105,6 +113,12 @@ async function sendMessageToAgent(prompt: string): Promise<string> {
     }
 
     const data = await response.json();
+
+    // Actualizar sesión si el backend devuelve una nueva
+    if (data.session_id) {
+      globalSessionId = data.session_id;
+    }
+
     return data.response;
   } catch (error) {
     console.error("Error sending message:", error);
@@ -119,6 +133,7 @@ function formatTime(date: Date): string {
   });
 }
 
+// --- COMPONENTE MESSAGE BUBBLE ACTUALIZADO CON MARKDOWN ---
 function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
   return (
@@ -134,18 +149,35 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       >
         <Icon name={isUser ? "target" : "lightbulb"} className="h-5 w-5 text-white" />
       </div>
-      <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} max-w-[75%]`}>
+      <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} max-w-[85%]`}>
         <div
           className={`rounded-2xl px-4 py-3 shadow-sm ${isUser
-            ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-900"
-            : "border border-slate-200 bg-white text-slate-900"
+            ? "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-900 rounded-tr-none"
+            : "border border-slate-200 bg-white text-slate-900 rounded-tl-none"
             }`}
         >
-          <p className="text-sm leading-relaxed">{message.content}</p>
+          {isUser ? (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            // Renderizado Markdown para el Asistente
+            <div className="markdown-body text-sm">
+              <ReactMarkdown
+                components={{
+                  p: ({ node, ...props }) => <p className="mb-2 last:mb-0 leading-relaxed" {...props} />,
+                  strong: ({ node, ...props }) => <span className="font-bold text-blue-700" {...props} />,
+                  ul: ({ node, ...props }) => <ul className="list-disc ml-4 mb-2 space-y-1" {...props} />,
+                  li: ({ node, ...props }) => <li className="leading-relaxed pl-1" {...props} />,
+                  code: ({ node, ...props }) => <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono text-red-500 border border-slate-200" {...props} />
+                }}
+              >
+                {message.content.replace(/\\/g, '')}
+              </ReactMarkdown>
+            </div>
+          )}
         </div>
         <span className="mt-1 px-1 text-xs text-slate-400">{formatTime(message.timestamp)}</span>
       </div>
-    </article>
+    </article >
   );
 }
 
@@ -155,7 +187,7 @@ function LoadingIndicator() {
       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-md">
         <Icon name="lightbulb" className="h-5 w-5 text-white" />
       </div>
-      <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm rounded-tl-none">
         <div className="flex gap-1.5">
           <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.3s]" />
           <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.15s]" />
@@ -217,24 +249,24 @@ function SidebarCard() {
         </div>
         <p className="text-xs leading-relaxed text-blue-800">
           Este componente está listo para conectarse con tu backend de ML. Implementa la función
-          <code className="rounded bg-blue-200 px-1.5 py-0.5 font-mono text-[11px]"> sendMessageToAgent()</code>
+          <code className="rounded bg-blue-200 px-1.5 py-0.5 font-mono text-[11px] mx-1">sendMessageToAgent()</code>
           para integrar el modelo de lenguaje y las herramientas de consulta de datos.
         </p>
         <div className="mt-4 rounded-lg border border-blue-200 bg-white/60 p-3">
           <p className="text-xs font-medium text-blue-900">Endpoints sugeridos:</p>
           <ul className="mt-2 space-y-1 text-xs text-blue-700">
             <li>
-              <code className="font-mono">/api/v1/chat/query</code>
+              <code className="font-mono bg-blue-50 px-1 rounded">/api/v1/chat/query</code>
             </li>
             <li>
-              <code className="font-mono">/api/v1/anomalies/explain</code>
+              <code className="font-mono bg-blue-50 px-1 rounded">/api/v1/anomalies/explain</code>
             </li>
             <li>
-              <code className="font-mono">/api/v1/insights/generate</code>
+              <code className="font-mono bg-blue-50 px-1 rounded">/api/v1/insights/generate</code>
             </li>
-          </ul>
-        </div>
-      </section>
+          </ul >
+        </div >
+      </section >
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-3 text-sm font-semibold text-slate-900">Acciones rápidas</h3>
         <div className="space-y-2">
@@ -254,7 +286,7 @@ function SidebarCard() {
           </Link>
         </div>
       </section>
-    </aside>
+    </aside >
   );
 }
 

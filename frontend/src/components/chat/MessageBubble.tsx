@@ -17,11 +17,10 @@ export function MessageBubble({ role, children }: MessageBubbleProps) {
         </div>
       )}
       <div
-        className={`max-w-[75%] rounded-2xl px-3 py-2 text-xs md:text-sm shadow-sm ${
-          isUser
-            ? "bg-blue-900 text-white rounded-br-sm"
-            : "bg-white text-slate-900 border border-slate-200 rounded-bl-sm"
-        }`}
+        className={`max-w-[75%] rounded-2xl px-3 py-2 text-xs md:text-sm shadow-sm ${isUser
+          ? "bg-blue-900 text-white rounded-br-sm"
+          : "bg-white text-slate-900 border border-slate-200 rounded-bl-sm"
+          }`}
       >
         {children}
       </div>
