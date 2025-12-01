@@ -87,19 +87,44 @@ export default function AnomalyDetailPage() {
       // Convertir PDF a base64
       const pdfBase64 = doc.output('datauristring').split(',')[1];
 
+      const anomalySummary = [
+        `Hola, adjunto el reporte de la anomalía ${id}.`,
+        "",
+        "Detalle de la anomalía:",
+        `• Ubicación: ${mockProperty.ubicacion}`,
+        `• Área construida: ${mockProperty.area} m²`,
+        `• Valor transacción: ${mockProperty.valor.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}`,
+        `• Tipo de inmueble: ${mockProperty.tipo}`,
+        "• Severidad: Alta (mock)",
+        "• Estado: Pendiente de revisión",
+      ].join('\n');
+
       // Enviar correo con EmailJS
       // NOTA: Necesitas configurar tu cuenta de EmailJS y reemplazar estos valores
+      const pdfFileName = `Anomalia_${id}_${new Date().toISOString().split('T')[0]}.pdf`;
       const templateParams = {
         to_email: recipientEmail,
+        email: recipientEmail,
         anomaly_id: id,
-        pdf_content: pdfBase64,
-        pdf_name: `Anomalia_${id}_${new Date().toISOString().split('T')[0]}.pdf`,
+        message: anomalySummary,
+        pdf_name: pdfFileName,
+        attachments: [
+          {
+            name: pdfFileName,
+            data: `data:application/pdf;base64,${pdfBase64}`,
+          },
+        ],
       };
 
-      // Configuración de EmailJS (DEBES CONFIGURAR ESTO)
-      const serviceId = 'YOUR_SERVICE_ID'; // Reemplazar con tu Service ID
-      const templateId = 'YOUR_TEMPLATE_ID'; // Reemplazar con tu Template ID
-      const publicKey = 'YOUR_PUBLIC_KEY'; // Reemplazar con tu Public Key
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error(
+          "Configuración de EmailJS incompleta. Verifica las variables NEXT_PUBLIC_EMAILJS_* en tu entorno."
+        );
+      }
 
       await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
