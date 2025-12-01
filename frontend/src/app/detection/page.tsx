@@ -5,6 +5,7 @@ import PropertyInputForm from "@/components/detection/PropertyInputForm";
 import PredictionResults from "@/components/detection/PredictionResults";
 import { fullPrediction } from "@/app/actions/predictions";
 import { PredioInput, PredictionFullResponse } from "@/types/prediction";
+import { Icon } from "@/components/shared/Icon";
 
 export default function DetectionPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -35,24 +36,41 @@ export default function DetectionPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
-            {/* Header */}
-            <div className="bg-white border-b border-slate-200 shadow-sm">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span className="text-3xl">🔍</span>
-                        </div>
+            {/* Header Premium Full Width */}
+            <header className="bg-gradient-to-r from-[var(--igac-blue-700)] via-[var(--igac-blue-600)] to-[var(--igac-blue-700)] shadow-2xl border-b border-[var(--igac-blue-800)] relative overflow-hidden mb-8">
+                {/* Patrón de fondo */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+                </div>
+
+                <div className="container mx-auto px-4 py-8 relative z-10">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-900">
-                                Detección de Anomalías Inmobiliarias
-                            </h1>
-                            <p className="text-slate-600 mt-1">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                    <Icon name="search" className="w-7 h-7 text-white" />
+                                </div>
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                                    Detección de Anomalías Inmobiliarias
+                                </h1>
+                            </div>
+                            <p className="text-blue-100 text-base max-w-2xl font-medium">
                                 Análisis inteligente de transacciones con Machine Learning
                             </p>
                         </div>
+                        <div className="flex flex-wrap gap-3">
+                            <span className="inline-flex items-center gap-2 rounded-xl bg-white/20 backdrop-blur-md px-4 py-2.5 font-semibold text-white border border-white/30 shadow-lg">
+                                <span className="w-2.5 h-2.5 bg-[var(--success-400)] rounded-full animate-pulse shadow-lg"></span>
+                                Sistema En Línea
+                            </span>
+                            <span className="inline-flex items-center gap-2 rounded-xl bg-white text-[var(--igac-blue-900)] px-4 py-2.5 font-bold shadow-lg">
+                                <Icon name="robot" className="w-4 h-4" />
+                                Modelo ML Activo
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-8">
@@ -61,7 +79,7 @@ export default function DetectionPage() {
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
                         <div className="flex items-start gap-4">
                             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <span className="text-xl">💡</span>
+                                <Icon name="lightbulb" className="w-6 h-6 text-white" />
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-blue-900 mb-2">
@@ -98,7 +116,7 @@ export default function DetectionPage() {
                         <div className="bg-red-50 border-2 border-red-300 rounded-xl p-6 mb-8">
                             <div className="flex items-start gap-4">
                                 <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <span className="text-xl">❌</span>
+                                    <Icon name="xmark" className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-red-900 mb-2">Error en el Análisis</h3>
@@ -141,7 +159,7 @@ export default function DetectionPage() {
                     {!prediction && !isLoading && !error && (
                         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
                             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="text-4xl">📊</span>
+                                <Icon name="chart" className="w-10 h-10 text-slate-400" />
                             </div>
                             <h3 className="text-xl font-bold text-slate-900 mb-2">
                                 Completa el formulario para comenzar
@@ -161,7 +179,7 @@ export default function DetectionPage() {
                         <div className="grid md:grid-cols-3 gap-6">
                             <div>
                                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
-                                    <span className="text-2xl">🎯</span>
+                                    <Icon name="target" className="w-7 h-7 text-white" />
                                 </div>
                                 <h4 className="font-bold mb-2">Precisión Alta</h4>
                                 <p className="text-sm text-blue-100">
@@ -170,7 +188,7 @@ export default function DetectionPage() {
                             </div>
                             <div>
                                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
-                                    <span className="text-2xl">⚡</span>
+                                    <Icon name="bolt" className="w-7 h-7 text-white" />
                                 </div>
                                 <h4 className="font-bold mb-2">Análisis Rápido</h4>
                                 <p className="text-sm text-blue-100">
@@ -179,7 +197,7 @@ export default function DetectionPage() {
                             </div>
                             <div>
                                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
-                                    <span className="text-2xl">🔒</span>
+                                    <Icon name="lock" className="w-7 h-7 text-white" />
                                 </div>
                                 <h4 className="font-bold mb-2">Datos Seguros</h4>
                                 <p className="text-sm text-blue-100">

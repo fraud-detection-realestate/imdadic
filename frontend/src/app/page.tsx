@@ -108,7 +108,7 @@ export default function Home() {
                   href={HERO_CONTENT.cta.primary.href}
                   className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-xl font-bold hover:from-blue-800 hover:to-blue-700 transition-all shadow-2xl hover:shadow-blue-500/50 hover:scale-105 transform"
                 >
-                  <span className="text-2xl">🔍</span>
+                  <Icon name="target" className="w-6 h-6" />
                   {HERO_CONTENT.cta.primary.label}
                   <Icon
                     name="trending"
@@ -119,7 +119,7 @@ export default function Home() {
                   href={HERO_CONTENT.cta.secondary.href}
                   className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-blue-900 border-2 border-blue-900 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:scale-105 transform"
                 >
-                  <span className="text-2xl">📊</span>
+                  <Icon name="chart" className="w-6 h-6" />
                   {HERO_CONTENT.cta.secondary.label}
                   <Icon
                     name="chart"
@@ -133,19 +133,19 @@ export default function Home() {
             <div className="mt-20 grid md:grid-cols-3 gap-6">
               {[
                 {
-                  icon: "🎯",
+                  icon: "target",
                   title: "Detección Inteligente",
                   desc: "Modelos ML entrenados",
                   href: "/detection",
                 },
                 {
-                  icon: "🗺️",
+                  icon: "map",
                   title: "Mapas Interactivos",
                   desc: "Visualización geoespacial",
                   href: "/maps",
                 },
                 {
-                  icon: "🤖",
+                  icon: "robot",
                   title: "Asistente IA",
                   desc: "Consultas en lenguaje natural",
                   href: "/chat",
@@ -156,12 +156,12 @@ export default function Home() {
                   href={feature.href}
                   onMouseEnter={() => setActiveFeature(idx)}
                   className={`group relative bg-white/80 backdrop-blur-sm p-8 rounded-2xl border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer ${activeFeature === idx
-                      ? "border-blue-500 shadow-xl shadow-blue-500/30"
-                      : "border-slate-200 hover:border-blue-300"
+                    ? "border-blue-500 shadow-xl shadow-blue-500/30"
+                    : "border-slate-200 hover:border-blue-300"
                     }`}
                 >
-                  <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">
-                    {feature.icon}
+                  <div className="mb-4 transform group-hover:scale-110 transition-transform">
+                    <Icon name={feature.icon as any} className="w-12 h-12 text-blue-600" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2">
                     {feature.title}
@@ -198,17 +198,19 @@ export default function Home() {
 
             <div className="grid md:grid-cols-4 gap-8">
               {[
-                { value: "34M+", label: "Registros de transacciones", icon: "📊" },
-                { value: "1,105", label: "Municipios cubiertos", icon: "🏛️" },
-                { value: "2015-2025", label: "Período de análisis", icon: "📅" },
-                { value: "24/7", label: "Monitoreo continuo", icon: "⚡" },
+                { value: "34M+", label: "Registros de transacciones", icon: "database" },
+                { value: "1,105", label: "Municipios cubiertos", icon: "map" },
+                { value: "2015-2025", label: "Período de análisis", icon: "clock" },
+                { value: "24/7", label: "Monitoreo continuo", icon: "trending" },
               ].map((stat, idx) => (
                 <div
                   key={idx}
-                  className="text-center group hover:scale-110 transition-transform duration-300"
+                  className="text-center group hover:scale-110 transition-transform duration-300 h-full"
                 >
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all hover:shadow-2xl hover:shadow-white/20">
-                    <div className="text-4xl mb-3">{stat.icon}</div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all hover:shadow-2xl hover:shadow-white/20 flex flex-col items-center h-full justify-center">
+                    <div className="mb-3">
+                      <Icon name={stat.icon as any} className="w-10 h-10 text-white/90" />
+                    </div>
                     <div className="text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">
                       {stat.value}
                     </div>
@@ -226,7 +228,7 @@ export default function Home() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-900 rounded-full text-sm font-semibold mb-6">
-              <span className="text-xl">💡</span>
+              <Icon name="lightbulb" className="w-5 h-5" />
               Capacidades del Sistema
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -240,48 +242,68 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
-                icon: "🔍",
+                icon: "checklist",
                 title: "Analizar Transacciones",
                 description:
                   "Clasifica el rango de precio y detecta anomalías en transacciones inmobiliarias usando modelos de Machine Learning",
                 features: ["Clasificación de precio", "Detección de fraude", "Análisis en segundos"],
                 href: "/detection",
-                color: "blue",
+                styles: {
+                  container: "bg-gradient-to-br from-blue-50 to-white border-blue-200 hover:border-blue-400",
+                  icon: "text-blue-600",
+                  dot: "bg-blue-600",
+                  button: "bg-blue-600 hover:bg-blue-700 text-white"
+                }
               },
               {
-                icon: "📊",
+                icon: "chart",
                 title: "Visualizar Datos",
                 description:
                   "Dashboard ejecutivo con KPIs, tendencias temporales y distribución geográfica de anomalías detectadas",
                 features: ["KPIs en tiempo real", "Gráficos interactivos", "Filtros avanzados"],
                 href: "/dashboard",
-                color: "indigo",
+                styles: {
+                  container: "bg-gradient-to-br from-indigo-50 to-white border-indigo-200 hover:border-indigo-400",
+                  icon: "text-indigo-600",
+                  dot: "bg-indigo-600",
+                  button: "bg-slate-900 hover:bg-slate-800 text-white"
+                }
               },
               {
-                icon: "🗺️",
+                icon: "map",
                 title: "Explorar Mapas",
                 description:
                   "Visualización geoespacial interactiva de anomalías por municipio con capas de calor y clustering",
                 features: ["Mapas interactivos", "Filtros geográficos", "Análisis territorial"],
                 href: "/maps",
-                color: "green",
+                styles: {
+                  container: "bg-gradient-to-br from-green-50 to-white border-green-200 hover:border-green-400",
+                  icon: "text-green-600",
+                  dot: "bg-green-600",
+                  button: "bg-green-600 hover:bg-green-700 text-white"
+                }
               },
               {
-                icon: "🤖",
+                icon: "robot",
                 title: "Consultar con IA",
                 description:
                   "Asistente conversacional inteligente para hacer preguntas sobre anomalías y obtener insights",
                 features: ["Consultas en lenguaje natural", "Respuestas contextuales", "Análisis profundo"],
                 href: "/chat",
-                color: "purple",
+                styles: {
+                  container: "bg-gradient-to-br from-purple-50 to-white border-purple-200 hover:border-purple-400",
+                  icon: "text-purple-600",
+                  dot: "bg-purple-600",
+                  button: "bg-purple-600 hover:bg-purple-700 text-white"
+                }
               },
             ].map((capability, idx) => (
               <div
                 key={idx}
-                className={`group relative bg-gradient-to-br from-${capability.color}-50 to-white p-8 rounded-2xl border-2 border-${capability.color}-200 hover:border-${capability.color}-400 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1`}
+                className={`group relative p-8 rounded-2xl border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${capability.styles.container}`}
               >
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">
-                  {capability.icon}
+                <div className="mb-4 group-hover:scale-110 transition-transform">
+                  <Icon name={capability.icon as any} className={`w-14 h-14 ${capability.styles.icon}`} />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-3">
                   {capability.title}
@@ -294,7 +316,7 @@ export default function Home() {
                 <ul className="space-y-2 mb-6">
                   {capability.features.map((feature, fidx) => (
                     <li key={fidx} className="flex items-center gap-2 text-sm text-slate-600">
-                      <div className={`w-1.5 h-1.5 rounded-full bg-${capability.color}-600`} />
+                      <div className={`w-1.5 h-1.5 rounded-full ${capability.styles.dot}`} />
                       {feature}
                     </li>
                   ))}
@@ -302,7 +324,7 @@ export default function Home() {
 
                 <Link
                   href={capability.href}
-                  className={`inline-flex items-center gap-2 px-6 py-3 bg-${capability.color}-600 text-white rounded-xl font-semibold hover:bg-${capability.color}-700 transition-all group-hover:gap-3 shadow-lg hover:shadow-xl`}
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all group-hover:gap-3 shadow-lg hover:shadow-xl ${capability.styles.button}`}
                 >
                   Comenzar
                   <Icon name="trending" className="w-4 h-4" />
@@ -414,7 +436,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="group inline-flex items-center gap-3 px-8 py-4 bg-white text-blue-900 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-2xl hover:shadow-white/20"
                   >
-                    <span className="text-xl">📊</span>
+                    <Icon name="database" className="w-6 h-6" />
                     Acceder al Dataset
                     <Icon name="trending" className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </a>
@@ -452,7 +474,7 @@ export default function Home() {
                 href={CTA_SECTION.buttons.primary.href}
                 className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-blue-900 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-2xl hover:shadow-3xl hover:scale-105"
               >
-                <span className="text-2xl">🔍</span>
+                <Icon name="target" className="w-6 h-6" />
                 {CTA_SECTION.buttons.primary.label}
                 <Icon name="chart" className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -460,7 +482,7 @@ export default function Home() {
                 href={CTA_SECTION.buttons.secondary.href}
                 className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition-all backdrop-blur-sm"
               >
-                <span className="text-2xl">📊</span>
+                <Icon name="chart" className="w-6 h-6" />
                 {CTA_SECTION.buttons.secondary.label}
                 <Icon name="map" className="w-5 h-5" />
               </Link>

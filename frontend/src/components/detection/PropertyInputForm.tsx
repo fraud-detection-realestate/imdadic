@@ -63,7 +63,7 @@ export default function PropertyInputForm({
             {/* Scenarios Preset */}
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                 <h3 className="text-sm font-semibold text-blue-900 mb-3">
-                    💡 Escenarios de Ejemplo
+                    Escenarios de Ejemplo
                 </h3>
                 <div className="flex flex-wrap gap-2">
                     <button
@@ -92,8 +92,8 @@ export default function PropertyInputForm({
 
             {/* Location Section */}
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    📍 Ubicación
+                <h3 className="text-lg font-bold text-slate-900 mb-4">
+                    Ubicación
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     <div>
@@ -147,8 +147,8 @@ export default function PropertyInputForm({
 
             {/* Property Characteristics */}
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    🏠 Características del Predio
+                <h3 className="text-lg font-bold text-slate-900 mb-4">
+                    Características del Predio
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     <div>
@@ -227,8 +227,8 @@ export default function PropertyInputForm({
 
             {/* Transaction Details */}
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    📄 Detalles de la Transacción
+                <h3 className="text-lg font-bold text-slate-900 mb-4">
+                    Detalles de la Transacción
                 </h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
@@ -390,9 +390,7 @@ export default function PropertyInputForm({
                             Analizando...
                         </>
                     ) : (
-                        <>
-                            🔍 Analizar Propiedad
-                        </>
+                        "Analizar Propiedad"
                     )}
                 </button>
             </div>

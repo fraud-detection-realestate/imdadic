@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { KpiCard } from "@/components/dashboard/KpiCard";
+import { Icon } from "@/components/shared/Icon";
 import { RecentAnomaliesTable } from "@/components/dashboard/RecentAnomaliesTable";
 import type { AnomalyRecord, AnomalySeverity } from "@/types/anomaly";
 import { getDashboardData, DashboardData } from "@/app/actions/dashboard";
@@ -98,21 +99,18 @@ export default function DashboardPage() {
         <FloatingParticles />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
-        {/* Header ejecutivo con diseño premium */}
-        <header className="mb-8 bg-gradient-to-r from-[var(--igac-blue-700)] via-[var(--igac-blue-600)] to-[var(--igac-blue-700)] rounded-2xl p-8 shadow-2xl border border-[var(--igac-blue-800)] relative overflow-hidden">
-          {/* Patrón de fondo */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-          </div>
+      <header className="bg-gradient-to-r from-[var(--igac-blue-700)] via-[var(--igac-blue-600)] to-[var(--igac-blue-700)] shadow-2xl border-b border-[var(--igac-blue-800)] relative overflow-hidden mb-8">
+        {/* Patrón de fondo */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        </div>
 
-          <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="container mx-auto px-4 py-8 relative z-10">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                  <Icon name="chart" className="w-7 h-7 text-white" />
                 </div>
                 <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                   Dashboard Ejecutivo IMDADIC
@@ -128,23 +126,22 @@ export default function DashboardPage() {
                 Sistema En Línea
               </span>
               <span className="inline-flex items-center gap-2 rounded-xl bg-white text-[var(--igac-blue-900)] px-4 py-2.5 font-bold shadow-lg">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Icon name="database" className="w-4 h-4" />
                 Datos Reales
               </span>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 pb-8">
 
         {/* Filtros con diseño premium */}
         <section className="mb-8 rounded-2xl border-2 border-[var(--igac-blue-200)] bg-gradient-to-br from-white to-[var(--igac-blue-50)] shadow-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-[var(--igac-blue-700)] to-[var(--igac-blue-800)] rounded-xl flex items-center justify-center shadow-lg">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
+                <Icon name="filter" className="w-5 h-5 text-white" />
               </div>
               <h2 className="text-xl font-bold text-[var(--gray-900)]">Filtros de Búsqueda</h2>
             </div>
@@ -152,9 +149,7 @@ export default function DashboardPage() {
               onClick={() => setFiltros({ ciudad: "Todas", severidad: "todas", fechaDesde: "", fechaHasta: "" })}
               className="text-sm font-semibold text-[var(--igac-blue-700)] hover:text-[var(--igac-blue-900)] hover:underline transition-all flex items-center gap-2"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
+              <Icon name="refresh" className="w-4 h-4" />
               Limpiar filtros
             </button>
           </div>

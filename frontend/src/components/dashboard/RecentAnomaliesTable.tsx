@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/shared/Card";
 import { Badge } from "@/components/shared/Badge";
 import type { BadgeVariant } from "@/components/shared/Badge";
+import { Icon } from "@/components/shared/Icon";
 
 interface RecentAnomaliesTableProps {
   anomalies: AnomalyRecord[];
@@ -119,9 +120,7 @@ export function RecentAnomaliesTable({ anomalies }: RecentAnomaliesTableProps) {
                 <td className="py-3.5 px-4 text-center">
                   {reviewedAnomalies[a.id] && (
                     <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
-                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
+                      <Icon name="check" className="w-4 h-4 text-green-600" />
                     </div>
                   )}
                 </td>
