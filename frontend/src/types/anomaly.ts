@@ -22,4 +22,5 @@ export interface AnomalyRecord {
   valorTransaccion: number;
   areaConstruida: number;
   estadoRevision: "pendiente" | "en_revision" | "cerrada";
+  revisada?: boolean; // Track if anomaly has been reviewed
 }

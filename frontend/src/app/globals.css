@@ -404,4 +404,32 @@ html {
       rgba(240, 247, 255, 0.5) 0%,
       rgba(255, 255, 255, 0.8) 50%,
       rgba(230, 242, 255, 0.5) 100%);
+}/* ========== Toast Animations ========== */
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--transition-slow) var(--ease-out);
+}
+
+.animate-progress {
+  animation: progress linear forwards;
 }

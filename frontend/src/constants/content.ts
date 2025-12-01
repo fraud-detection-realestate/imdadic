@@ -4,7 +4,7 @@ export type IconName = 'chart' | 'map' | 'clock' | 'lightbulb' | 'target' | 'che
 export const SITE_CONFIG = {
   name: "IGAC",
   fullName: "Instituto Geográfico Agustín Codazzi",
-  subtitle: "Sistema de Monitoreo Inmobiliario",
+  subtitle: "Sistema Inteligente de Monitoreo Inmobiliario",
   description: "Garantizando la transparencia del mercado inmobiliario en Colombia a través de análisis avanzado de datos y detección inteligente de anomalías en transacciones de propiedad raíz",
   location: "Bogotá D.C., Colombia",
   year: "2024",
@@ -20,9 +20,9 @@ export const NAVIGATION_LINKS = [
 export const HERO_CONTENT = {
   badge: "Innovación en Análisis Territorial",
   title: {
-    prefix: "Sistema de Monitoreo y Detección de Anomalías en",
-    highlight: "Dinámica Inmobiliaria",
-    suffix: "en Colombia",
+    highlight: "IMDADIC",
+    prefix: "",
+    suffix: "\nInteligencia para el Monitoreo y Detección Avanzada de Dinámicas Inmobiliarias en Colombia",
   },
   description: "Plataforma avanzada para el análisis de más de 34 millones de transacciones inmobiliarias distribuidas en 1,105 municipios entre 2015 y 2025",
   cta: {
