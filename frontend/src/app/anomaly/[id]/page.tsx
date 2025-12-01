@@ -2,12 +2,120 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import emailjs from "@emailjs/browser";
 import { Card } from "@/components/shared/Card";
 import { FloatingParticles } from "@/components/shared/FloatingParticles";
+import { Toast } from "@/components/shared/Toast";
+import { EmailModal } from "@/components/shared/EmailModal";
 
 export default function AnomalyDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? "A-XXXX";
+  const [isReviewed, setIsReviewed] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  // Load reviewed status from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('reviewedAnomalies');
+    if (stored) {
+      const reviewed = JSON.parse(stored);
+      setIsReviewed(reviewed[id] || false);
+    }
+  }, [id]);
+
+  // Mark as reviewed handler
+  const handleMarkAsReviewed = () => {
+    const stored = localStorage.getItem('reviewedAnomalies');
+    const reviewed = stored ? JSON.parse(stored) : {};
+    reviewed[id] = true;
+    localStorage.setItem('reviewedAnomalies', JSON.stringify(reviewed));
+    setIsReviewed(true);
+    setToastMessage("Anomalía marcada como revisada exitosamente");
+    setToastType("success");
+    setShowToast(true);
+  };
+
+  // Function to send email with PDF
+  const handleSendEmail = async (recipientEmail: string) => {
+    try {
+      setIsSendingEmail(true);
+
+      // Generar el PDF
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+
+      // Configuración de colores IGAC
+      const igacBlue: [number, number, number] = [0, 56, 118];
+
+      // Header con branding IGAC
+      doc.setFillColor(...igacBlue);
+      doc.rect(0, 0, 210, 40, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.setFont("helvetica", 'bold');
+      doc.text('IGAC - Instituto Geográfico Agustín Codazzi', 105, 15, { align: 'center' });
+      doc.setFontSize(14);
+      doc.setFont("helvetica", 'normal');
+      doc.text('Sistema de Monitoreo de Dinámica Inmobiliaria', 105, 25, { align: 'center' });
+      doc.setFontSize(12);
+      doc.text(`Reporte de Anomalía: ${id}`, 105, 33, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+
+      // Contenido del PDF (simplificado)
+      let yPos = 50;
+      doc.setFontSize(16);
+      doc.setFont("helvetica", 'bold');
+      doc.setTextColor(...igacBlue);
+      doc.text('Datos de la Propiedad', 20, yPos);
+      yPos += 10;
+      doc.setFontSize(11);
+      doc.setFont("helvetica", 'normal');
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Ubicación: ${mockProperty.ubicacion}`, 20, yPos);
+      yPos += 7;
+      doc.text(`Área construida: ${mockProperty.area} m²`, 20, yPos);
+      yPos += 7;
+      doc.text(`Valor: ${mockProperty.valor.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}`, 20, yPos);
+      yPos += 7;
+      doc.text(`Tipo: ${mockProperty.tipo}`, 20, yPos);
+
+      // Convertir PDF a base64
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
+
+      // Enviar correo con EmailJS
+      // NOTA: Necesitas configurar tu cuenta de EmailJS y reemplazar estos valores
+      const templateParams = {
+        to_email: recipientEmail,
+        anomaly_id: id,
+        pdf_content: pdfBase64,
+        pdf_name: `Anomalia_${id}_${new Date().toISOString().split('T')[0]}.pdf`,
+      };
+
+      // Configuración de EmailJS (DEBES CONFIGURAR ESTO)
+      const serviceId = 'YOUR_SERVICE_ID'; // Reemplazar con tu Service ID
+      const templateId = 'YOUR_TEMPLATE_ID'; // Reemplazar con tu Template ID
+      const publicKey = 'YOUR_PUBLIC_KEY'; // Reemplazar con tu Public Key
+
+      await emailjs.send(serviceId, templateId, templateParams, publicKey);
+
+      setShowEmailModal(false);
+      setToastMessage(`Reporte enviado exitosamente a ${recipientEmail}`);
+      setToastType("success");
+      setShowToast(true);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setToastMessage("Error al enviar el correo. Por favor intenta nuevamente.");
+      setToastType("error");
+      setShowToast(true);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
 
   // Datos mock mínimos; esta vista espera datos reales desde backend
   const mockProperty = {
@@ -218,17 +326,27 @@ export default function AnomalyDetailPage() {
             subtitle="Gestionar el estado de la anomalía"
           >
             <div className="flex flex-col gap-3">
-              <button className="rounded-xl bg-gradient-to-r from-[var(--igac-blue-700)] to-[var(--igac-blue-800)] px-4 py-3 text-white font-semibold hover:from-[var(--igac-blue-800)] hover:to-[var(--igac-blue-900)] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+              <button
+                onClick={handleMarkAsReviewed}
+                disabled={isReviewed}
+                className={`rounded-xl px-4 py-3 text-white font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${isReviewed
+                  ? 'bg-gradient-to-r from-green-600 to-green-700 cursor-not-allowed opacity-75'
+                  : 'bg-gradient-to-r from-[var(--igac-blue-700)] to-[var(--igac-blue-800)] hover:from-[var(--igac-blue-800)] hover:to-[var(--igac-blue-900)]'
+                  }`}
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Marcar como revisada
+                {isReviewed ? 'Ya revisada ✓' : 'Marcar como revisada'}
               </button>
-              <button className="rounded-xl bg-gradient-to-r from-[var(--igac-blue-600)] to-[var(--igac-blue-700)] px-4 py-3 text-white font-semibold hover:from-[var(--igac-blue-700)] hover:to-[var(--igac-blue-800)] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+              <button
+                onClick={() => setShowEmailModal(true)}
+                className="rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 px-4 py-3 text-white font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Escalar a supervisor
+                Enviar por Correo
               </button>
               <button
                 onClick={handleExportPDF}
@@ -243,6 +361,23 @@ export default function AnomalyDetailPage() {
           </Card>
         </section>
       </div>
+
+      {/* Email Modal */}
+      <EmailModal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onSend={handleSendEmail}
+        isLoading={isSendingEmail}
+      />
+
+      {/* Toast notification */}
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </main>
   );
 }

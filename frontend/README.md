@@ -2,17 +2,17 @@
 
 Aplicación web moderna para el monitoreo y análisis de anomalías en el mercado inmobiliario colombiano. Desarrollada con tecnologías de vanguardia para ofrecer una experiencia de usuario fluida y potentes capacidades de visualización de datos.
 
-## 🚀 Características principales
+## Características principales
 
 - **Dashboard ejecutivo** con KPIs y gráficos interactivos
 - **Mapa georreferenciado** para visualización espacial de anomalías
 - **Chat con agente IA** para consultas naturales sobre los datos
 - **Diseño responsive** que se adapta a cualquier dispositivo
-- **Tema claro/oscuro** para mejor experiencia visual
+- **Tema claro** para mejor experiencia visual
 
-## 🛠️ Tecnologías principales
+## Tecnologías principales
 
-- **Framework**: Next.js 14 (App Router) + React 18
+- **Framework**: Next.js 14 (App Router) + React 19
 - **Lenguaje**: TypeScript
 - **Estilos**: Tailwind CSS
 - **Visualización de datos**: Recharts (gráficos), Leaflet (mapas)

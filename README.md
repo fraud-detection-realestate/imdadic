@@ -1,4 +1,4 @@
-# IMDADIC: Sistema de Monitoreo y Detección de Anomalías Inmobiliarias
+# IMDADIC: Inteligencia para el Monitoreo y Detección Avanzada de Dinámicas Inmobiliarias en Colombia
 
 ## Tabla de Contenidos
 
