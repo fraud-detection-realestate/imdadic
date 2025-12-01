@@ -210,31 +210,6 @@ function SidebarCard() {
           ))}
         </ul>
       </section>
-      <section className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50 p-6">
-        <div className="mb-3 flex items-center gap-2">
-          <Icon name="database" className="h-4 w-4 text-blue-600" />
-          <h3 className="text-sm font-semibold text-blue-900">Integración técnica</h3>
-        </div>
-        <p className="text-xs leading-relaxed text-blue-800">
-          Este componente está listo para conectarse con tu backend de ML. Implementa la función
-          <code className="rounded bg-blue-200 px-1.5 py-0.5 font-mono text-[11px]"> sendMessageToAgent()</code>
-          para integrar el modelo de lenguaje y las herramientas de consulta de datos.
-        </p>
-        <div className="mt-4 rounded-lg border border-blue-200 bg-white/60 p-3">
-          <p className="text-xs font-medium text-blue-900">Endpoints sugeridos:</p>
-          <ul className="mt-2 space-y-1 text-xs text-blue-700">
-            <li>
-              <code className="font-mono">/api/v1/chat/query</code>
-            </li>
-            <li>
-              <code className="font-mono">/api/v1/anomalies/explain</code>
-            </li>
-            <li>
-              <code className="font-mono">/api/v1/insights/generate</code>
-            </li>
-          </ul>
-        </div>
-      </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-3 text-sm font-semibold text-slate-900">Acciones rápidas</h3>
         <div className="space-y-2">
