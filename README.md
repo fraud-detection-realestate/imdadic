@@ -276,6 +276,12 @@ docker-compose logs agent | grep -i "api key"
 - **Institución**: Instituto Geográfico Agustín Codazzi (IGAC)
 - **Repositorio**: [github.com/tu-organizacion/imdadic](https://github.com/tu-organizacion/imdadic)
 
+## Autores
+
+- Juan Carlos Charfuelan
+- Keyla Daniela Cartagena
+- Dylber Denylson Cabrera
+
 ---
 
-**Nota**: Este proyecto está en desarrollo activo. Para contribuir o reportar issues, por favor usa el [issue tracker de GitHub](https://github.com/tu-organizacion/imdadic/issues).
+**Nota**: Este proyecto está en desarrollo activo. Para contribuir o reportar issues, por favor usa el [Correo del Lider](cartagenadiazkeyladaniela@gmail.com).
