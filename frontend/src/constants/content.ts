@@ -1,39 +1,38 @@
-// src/constants/content.ts
-
 // Tipos para los iconos
 export type IconName = 'chart' | 'map' | 'clock' | 'lightbulb' | 'target' | 'checklist' | 'trending' | 'database';
 
 export const SITE_CONFIG = {
   name: "IGAC",
   fullName: "Instituto Geográfico Agustín Codazzi",
-  subtitle: "Sistema de Monitoreo Inmobiliario",
+  subtitle: "Sistema Inteligente de Monitoreo Inmobiliario",
   description: "Garantizando la transparencia del mercado inmobiliario en Colombia a través de análisis avanzado de datos y detección inteligente de anomalías en transacciones de propiedad raíz",
   location: "Bogotá D.C., Colombia",
   year: "2024",
 } as const;
 
 export const NAVIGATION_LINKS = [
-  { href: "#challenge", label: "Descripción" },
-  { href: "#objectives", label: "Objetivos" },
-  { href: "#impact", label: "Impacto" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/detection", label: "Detectar Anomalías" },
+  { href: "/maps", label: "Mapas" },
+  { href: "/chat", label: "Asistente IA" },
 ] as const;
 
 export const HERO_CONTENT = {
   badge: "Innovación en Análisis Territorial",
   title: {
-    prefix: "Sistema de Monitoreo y Detección de Anomalías en",
-    highlight: "Dinámica Inmobiliaria",
-    suffix: "en Colombia",
+    highlight: "IMDADIC",
+    prefix: "",
+    suffix: "\nInteligencia para el Monitoreo y Detección Avanzada de Dinámicas Inmobiliarias en Colombia",
   },
   description: "Plataforma avanzada para el análisis de más de 34 millones de transacciones inmobiliarias distribuidas en 1,105 municipios entre 2015 y 2025",
   cta: {
     primary: {
-      label: "Acceder al Dashboard",
-      href: "/dashboard",
+      label: "Detectar Anomalías Ahora",
+      href: "/detection",
     },
     secondary: {
-      label: "Ver Análisis Estadístico",
-      href: "/analytics",
+      label: "Ver Dashboard",
+      href: "/dashboard",
     },
   },
 } as const;
@@ -47,31 +46,31 @@ export const FEATURE_CARDS: Array<{
   title: string;
   description: string;
 }> = [
-  {
-    id: "analysis",
-    icon: "chart",
-    bgColor: "bg-blue-100",
-    iconColor: "text-blue-900",
-    title: "Análisis Avanzado",
-    description: "Modelos de detección basados en estadísticas, reglas y machine learning",
-  },
-  {
-    id: "visualization",
-    icon: "map",
-    bgColor: "bg-green-100",
-    iconColor: "text-green-700",
-    title: "Visualización Geoespacial",
-    description: "Mapas interactivos con análisis territorial de todo el país",
-  },
-  {
-    id: "realtime",
-    icon: "clock",
-    bgColor: "bg-purple-100",
-    iconColor: "text-purple-700",
-    title: "Tiempo Real",
-    description: "Monitoreo y detección de anomalías en tiempo real o periódico",
-  },
-];
+    {
+      id: "analysis",
+      icon: "chart",
+      bgColor: "bg-blue-100",
+      iconColor: "text-blue-900",
+      title: "Análisis Avanzado",
+      description: "Modelos de detección basados en estadísticas, reglas y machine learning",
+    },
+    {
+      id: "visualization",
+      icon: "map",
+      bgColor: "bg-green-100",
+      iconColor: "text-green-700",
+      title: "Visualización Geoespacial",
+      description: "Mapas interactivos con análisis territorial de todo el país",
+    },
+    {
+      id: "realtime",
+      icon: "clock",
+      bgColor: "bg-purple-100",
+      iconColor: "text-purple-700",
+      title: "Tiempo Real",
+      description: "Monitoreo y detección de anomalías en tiempo real o periódico",
+    },
+  ];
 
 export const CHALLENGE_CONTENT = {
   title: "Descripción del Reto",
@@ -139,12 +138,12 @@ export const CTA_SECTION = {
   description: "Acceda a la plataforma más avanzada de análisis inmobiliario en Colombia. Más de 34 millones de transacciones, visualización geoespacial en tiempo real y detección inteligente de anomalías.",
   buttons: {
     primary: {
-      label: "Acceder al Sistema",
-      href: "/dashboard",
+      label: "Analizar Transacción",
+      href: "/detection",
     },
     secondary: {
-      label: "Explorar Mapas Interactivos",
-      href: "/maps",
+      label: "Ver Dashboard",
+      href: "/dashboard",
     },
   },
 } as const;
@@ -152,6 +151,6 @@ export const CTA_SECTION = {
 export const FOOTER_CONTENT = {
   organization: "Instituto Geográfico Agustín Codazzi",
   systemName: "Sistema de Monitoreo de Dinámica Inmobiliaria",
-  copyright: "© 2024 IGAC. Todos los derechos reservados.",
+  copyright: "© 2025 IGAC. Todos los derechos reservados.",
   location: "Bogotá D.C., Colombia",
 } as const;

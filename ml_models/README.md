@@ -30,7 +30,7 @@ Los siguientes archivos `.pkl` son requeridos para la inferencia en producción:
     "YEAR_RADICA": 2023,
     "NUM_ANOTACION": 5,
     "Dinámica_Inmobiliaria": 10,
-    "COD_NATUJUR": 125, # Código de Compraventa
+    "COD_NATUJUR": 125,
     "COUNT_A": 1,
     "COUNT_DE": 1,
     "PREDIOS_NUEVOS": 0,

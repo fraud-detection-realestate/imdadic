@@ -2,17 +2,17 @@
 
 Aplicación web moderna para el monitoreo y análisis de anomalías en el mercado inmobiliario colombiano. Desarrollada con tecnologías de vanguardia para ofrecer una experiencia de usuario fluida y potentes capacidades de visualización de datos.
 
-## 🚀 Características principales
+## Características principales
 
 - **Dashboard ejecutivo** con KPIs y gráficos interactivos
 - **Mapa georreferenciado** para visualización espacial de anomalías
 - **Chat con agente IA** para consultas naturales sobre los datos
 - **Diseño responsive** que se adapta a cualquier dispositivo
-- **Tema claro/oscuro** para mejor experiencia visual
+- **Tema claro** para mejor experiencia visual
 
-## 🛠️ Tecnologías principales
+## Tecnologías principales
 
-- **Framework**: Next.js 14 (App Router) + React 18
+- **Framework**: Next.js 14 (App Router) + React 19
 - **Lenguaje**: TypeScript
 - **Estilos**: Tailwind CSS
 - **Visualización de datos**: Recharts (gráficos), Leaflet (mapas)
@@ -27,24 +27,28 @@ Aplicación web moderna para el monitoreo y análisis de anomalías en el mercad
 ## 🚀 Instalación y ejecución
 
 ### Requisitos previos
+
 - Node.js 18+ y npm 9+
 - Variables de entorno configuradas (ver sección correspondiente)
 
 ### Configuración inicial
 
 1. Instalar dependencias:
+
 ```bash
 cd frontend
 npm install
 ```
 
 2. Configurar variables de entorno:
+
 ```bash
 cp .env.example .env.local
 # Editar .env.local con tus credenciales
 ```
 
 3. Iniciar servidor de desarrollo:
+
 ```bash
 npm run dev
 ```
@@ -171,7 +175,6 @@ frontend/
 
 ---
 
-
 ### Integración de Datos Reales (CSV)
 
 Se ha integrado el archivo `tablero_riesgos.csv` en el dashboard y las estadísticas:
@@ -193,11 +196,13 @@ El chat está completamente integrado con el backend FastAPI:
 Implementación completa de mapa interactivo en `/maps`:
 
 **Tecnologías:**
+
 - React-Leaflet para renderizado de mapas
 - OpenStreetMap como proveedor de tiles (sin API key)
 - Marcadores personalizados por severidad
 
 **Características:**
+
 - Visualización de anomalías con coordenadas geográficas
 - Popups informativos con detalles de cada anomalía
 - Filtros por ciudad, severidad y tipo
@@ -205,6 +210,7 @@ Implementación completa de mapa interactivo en `/maps`:
 - Diseño responsivo y accesible
 
 **Datos:**
+
 - Mapeo de coordenadas para principales ciudades colombianas
 - Procesamiento de hasta 5000 puntos del CSV
 - Clasificación por severidad basada en score
@@ -216,7 +222,9 @@ Implementación completa de mapa interactivo en `/maps`:
 ### Endpoints principales
 
 #### Chat API (`/api/chat`)
+
 - `POST /api/chat` - Envía un mensaje al agente de IA
+
   ```typescript
   interface ChatRequest {
     message: string;
@@ -234,6 +242,7 @@ Implementación completa de mapa interactivo en `/maps`:
   ```
 
 #### Dashboard API
+
 - `GET /api/dashboard/summary` - Resumen ejecutivo
 - `GET /api/dashboard/trends` - Tendencias temporales
 - `GET /api/anomalies` - Lista de anomalías
@@ -300,11 +309,13 @@ npm run test:coverage
 ### Pasos para despliegue
 
 1. Construir la aplicación:
+
    ```bash
    npm run build
    ```
 
 2. Iniciar el servidor de producción:
+
    ```bash
    npm start
    ```
@@ -342,7 +353,7 @@ Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 ## Testing y calidad
 
-- Tests unitarios y E2E (según configuración del proyecto): `npm test` (o `npm run test:e2e`) 
+- Tests unitarios y E2E (según configuración del proyecto): `npm test` (o `npm run test:e2e`)
 - Linter: `npm run lint`
 - Type-check: `npm run type-check`
 
@@ -355,4 +366,3 @@ Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 - Estado local/ventana: Zustand cuando se requiere estado global simple (filtros, UI state).
 
 ---
-

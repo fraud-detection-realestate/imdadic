@@ -2,6 +2,7 @@
 
 import type { AnomalyRecord } from "@/types/anomaly";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/shared/Card";
 import { Badge } from "@/components/shared/Badge";
 import type { BadgeVariant } from "@/components/shared/Badge";
@@ -23,6 +24,25 @@ const severityLabels: Record<AnomalyRecord["severidad"], string> = {
 };
 
 export function RecentAnomaliesTable({ anomalies }: RecentAnomaliesTableProps) {
+  const [reviewedAnomalies, setReviewedAnomalies] = useState<Record<string, boolean>>({});
+
+  // Load reviewed anomalies from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('reviewedAnomalies');
+    if (stored) {
+      setReviewedAnomalies(JSON.parse(stored));
+    }
+
+    // Set up an interval to check for updates (in case user marks as reviewed in another tab)
+    const interval = setInterval(() => {
+      const updated = localStorage.getItem('reviewedAnomalies');
+      if (updated) {
+        setReviewedAnomalies(JSON.parse(updated));
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
   return (
     <Card
       title="Anomalías recientes"
@@ -50,6 +70,9 @@ export function RecentAnomaliesTable({ anomalies }: RecentAnomaliesTableProps) {
               </th>
               <th className="py-3.5 px-4 text-right font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
                 Valor
+              </th>
+              <th className="py-3.5 px-4 text-center font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
+                Revisada
               </th>
               <th className="py-3.5 px-4 text-center font-semibold text-[var(--gray-700)] text-xs uppercase tracking-wide">
                 Acciones
@@ -92,6 +115,15 @@ export function RecentAnomaliesTable({ anomalies }: RecentAnomaliesTableProps) {
                     currency: "COP",
                     maximumFractionDigits: 0,
                   })}
+                </td>
+                <td className="py-3.5 px-4 text-center">
+                  {reviewedAnomalies[a.id] && (
+                    <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
+                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
                 </td>
                 <td className="py-3.5 px-4 text-center">
                   <Link
