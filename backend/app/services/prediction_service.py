@@ -1,10 +1,6 @@
-"""
-Prediction Service - Business logic for ML predictions
-CORRECTED for LightGBM Booster API
-"""
-
 import pandas as pd
 import numpy as np
+import unicodedata
 from typing import Dict, Any
 from app.models_ml.model_loader import ml_models
 import logging
@@ -18,6 +14,40 @@ class PredictionService:
     def __init__(self):
         """Initialize prediction service"""
         pass
+
+    def _normalize_text(self, text: Any) -> Any:
+        """
+        Normaliza texto intentando coincidir con los datos de entrenamiento (con tildes).
+        """
+        if not isinstance(text, str):
+            return text
+
+        # 1. Convertir a mayúsculas y quitar espacios extra
+        text = text.upper().strip()
+
+        # 2. Mapeo manual de casos especiales (Basado en tu CSV)
+        # Si llega sin tilde, lo convertimos CON tilde
+        correcciones = {
+            "BOGOTA": "BOGOTÁ D.C.",
+            "BOGOTA D.C.": "BOGOTÁ D.C.",
+            "BOGOTÁ": "BOGOTÁ D.C.",  # Por si llega solo Bogotá con tilde
+            "ATLANTICO": "ATLÁNTICO",
+            "BOLIVAR": "BOLÍVAR",
+            "CORDOBA": "CÓRDOBA",
+            "BOYACA": "BOYACÁ",
+            "NARIÑO": "NARIÑO",  # La ñ suele sobrevivir al upper(), pero por si acaso
+            "CHOCO": "CHOCÓ",
+            "QUINDIO": "QUINDÍO",
+            "GUAINIA": "GUAINÍA",
+            "VAUPES": "VAUPÉS",
+        }
+
+        if text in correcciones:
+            return correcciones[text]
+
+        # 3. Si no está en el mapa, devolvemos el texto tal cual (asumiendo que viene bien o no requiere tilde)
+        # NOTA: Ya NO quitamos tildes automáticamente porque tu modelo las usa.
+        return text
 
     def clasificar_precio(self, predio_dict: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -41,8 +71,16 @@ class PredictionService:
                 "target_classes", []
             )  # ['ALTO', 'BAJO', 'LUJO', 'MEDIO']
 
+            # Create a copy to avoid modifying the original dict
+            input_data = predio_dict.copy()
+
+            # Normalize text fields
+            for key in ["DEPARTAMENTO", "MUNICIPIO"]:
+                if key in input_data:
+                    input_data[key] = self._normalize_text(input_data[key])
+
             # Convert to DataFrame with only required features
-            df = pd.DataFrame([predio_dict])
+            df = pd.DataFrame([input_data])
 
             # Select only the features that were used in training
             df = df[all_features]
@@ -96,8 +134,14 @@ class PredictionService:
             encoders = artifacts.get("encoders", {})  # Dict with lists as values
             scaler_dict = artifacts.get("scaler", {})
 
+            # Create a copy and normalize
+            input_data = predio_dict.copy()
+            for key in ["DEPARTAMENTO", "MUNICIPIO"]:
+                if key in input_data:
+                    input_data[key] = self._normalize_text(input_data[key])
+
             # Convert to DataFrame
-            df = pd.DataFrame([predio_dict])
+            df = pd.DataFrame([input_data])
 
             # Select only the required features
             df = df[features]
@@ -153,11 +197,16 @@ class PredictionService:
                 logger.warning("No scaler information found, using raw values")
                 df_scaled = df.values
 
+            # --- FIX: Reconstruct DataFrame with feature names ---
+            # IsolationForest was fitted with feature names, so we must provide them
+            # to avoid UserWarning and potential mismatches.
+            df_final = pd.DataFrame(df_scaled, columns=features)
+
             # Make prediction (-1 = anomaly, 1 = normal)
-            prediction = detector.predict(df_scaled)[0]
+            prediction = detector.predict(df_final)[0]
 
             # Get anomaly score (lower = more anomalous)
-            score = detector.score_samples(df_scaled)[0]
+            score = detector.score_samples(df_final)[0]
 
             return {
                 "anomalia_detectada": prediction == -1,

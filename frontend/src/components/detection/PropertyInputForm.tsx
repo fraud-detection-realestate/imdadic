@@ -58,6 +58,8 @@ export default function PropertyInputForm({
         }
     };
 
+    const inputClassName = "w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white disabled:bg-slate-100 disabled:text-slate-500";
+
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {/* Scenarios Preset */}
@@ -103,7 +105,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.DEPARTAMENTO}
                             onChange={(e) => handleChange("DEPARTAMENTO", e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className={inputClassName}
                             required
                         >
                             {DEPARTAMENTOS_COLOMBIA.map((dept) => (
@@ -122,7 +124,7 @@ export default function PropertyInputForm({
                             <select
                                 value={formData.MUNICIPIO}
                                 onChange={(e) => handleChange("MUNICIPIO", e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                                 required
                             >
                                 {availableMunicipios.map((mun) => (
@@ -158,7 +160,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.TIPO_PREDIO_ZONA}
                             onChange={(e) => handleChange("TIPO_PREDIO_ZONA", e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         >
                             {TIPO_PREDIO_OPTIONS.map((tipo) => (
@@ -176,7 +178,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.CATEGORIA_RURALIDAD}
                             onChange={(e) => handleChange("CATEGORIA_RURALIDAD", e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         >
                             {CATEGORIA_RURALIDAD_OPTIONS.map((cat) => (
@@ -194,7 +196,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.ORIP}
                             onChange={(e) => handleChange("ORIP", e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         >
                             {ORIP_OPTIONS.map((orip) => (
@@ -212,7 +214,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.ESTADO_FOLIO}
                             onChange={(e) => handleChange("ESTADO_FOLIO", e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         >
                             {ESTADO_FOLIO_OPTIONS.map((estado) => (
@@ -238,7 +240,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.COD_NATUJUR}
                             onChange={(e) => handleChange("COD_NATUJUR", parseInt(e.target.value))}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         >
                             {COD_NATUJUR_OPTIONS.map((cod) => (
@@ -259,7 +261,7 @@ export default function PropertyInputForm({
                             onChange={(e) => handleChange("YEAR_RADICA", parseInt(e.target.value))}
                             min={2015}
                             max={2025}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                     </div>
@@ -273,7 +275,7 @@ export default function PropertyInputForm({
                             value={formData.NUM_ANOTACION}
                             onChange={(e) => handleChange("NUM_ANOTACION", parseInt(e.target.value))}
                             min={0}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                     </div>
@@ -287,7 +289,7 @@ export default function PropertyInputForm({
                             value={formData.Dinámica_Inmobiliaria}
                             onChange={(e) => handleChange("Dinámica_Inmobiliaria", parseInt(e.target.value))}
                             min={0}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                     </div>
@@ -301,7 +303,7 @@ export default function PropertyInputForm({
                             value={formData.COUNT_A}
                             onChange={(e) => handleChange("COUNT_A", parseInt(e.target.value))}
                             min={0}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                     </div>
@@ -315,7 +317,7 @@ export default function PropertyInputForm({
                             value={formData.COUNT_DE}
                             onChange={(e) => handleChange("COUNT_DE", parseInt(e.target.value))}
                             min={0}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                     </div>
@@ -329,7 +331,7 @@ export default function PropertyInputForm({
                             value={formData.PREDIOS_NUEVOS}
                             onChange={(e) => handleChange("PREDIOS_NUEVOS", parseInt(e.target.value))}
                             min={0}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                     </div>
@@ -341,7 +343,7 @@ export default function PropertyInputForm({
                         <select
                             value={formData.TIENE_MAS_DE_UN_VALOR}
                             onChange={(e) => handleChange("TIENE_MAS_DE_UN_VALOR", parseInt(e.target.value) as 0 | 1)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         >
                             <option value={0}>No</option>
@@ -359,7 +361,7 @@ export default function PropertyInputForm({
                             onChange={(e) => handleChange("VALOR_CONSTANTE_2024", parseFloat(e.target.value))}
                             min={0}
                             step={1000000}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 bg-white"
                             required
                         />
                         <p className="text-xs text-slate-500 mt-1">

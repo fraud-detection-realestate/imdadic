@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapContainer as LeafletMap, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import { Card } from "@/components/shared/Card";
 import type { MapPoint } from "@/app/actions/map";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 // Fix for default marker icons in Next.js
+// (Este bloque está bien, déjalo como está)
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -24,18 +26,15 @@ interface MapContainerProps {
 // Custom marker colors based on severity
 function getMarkerColor(severity: "alta" | "media" | "baja"): string {
   switch (severity) {
-    case "alta":
-      return "#dc2626"; // red-600
-    case "media":
-      return "#f59e0b"; // amber-500
-    case "baja":
-      return "#10b981"; // emerald-500
-    default:
-      return "#6b7280"; // gray-500
+    case "alta": return "#dc2626";
+    case "media": return "#f59e0b";
+    case "baja": return "#10b981";
+    default: return "#6b7280";
   }
 }
 
-function createCustomIcon(severity: "alta" | "media" | "baja") {
+// Memoized icon creation to avoid recreating icons on every render
+const createCustomIcon = (severity: "alta" | "media" | "baja") => {
   const color = getMarkerColor(severity);
   return L.divIcon({
     className: "custom-marker",
@@ -43,16 +42,22 @@ function createCustomIcon(severity: "alta" | "media" | "baja") {
     iconSize: [12, 12],
     iconAnchor: [6, 6],
   });
-}
+};
 
-// Component to handle map updates
-function MapUpdater({ points, mode }: { points: MapPoint[]; mode: string }) {
+// Component to handle map updates (Auto-fit bounds)
+function MapUpdater({ points }: { points: MapPoint[] }) {
   const map = useMap();
 
   useEffect(() => {
     if (points.length > 0) {
-      const bounds = L.latLngBounds(points.map(p => [p.lat, p.lng]));
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+      try {
+        const bounds = L.latLngBounds(points.map(p => [p.lat, p.lng]));
+        if (bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+        }
+      } catch (e) {
+        console.error("Error fitting bounds:", e);
+      }
     }
   }, [points, map]);
 
@@ -66,98 +71,99 @@ export function MapContainer({ mode, points, loading }: MapContainerProps) {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return (
-      <Card
-        title="Mapa interactivo de anomalías"
-        subtitle="Cargando mapa..."
-        className="h-full"
-      >
-        <div className="aspect-[16/9] w-full flex items-center justify-center bg-slate-100 rounded-xl">
-          <p className="text-sm text-slate-500">Inicializando mapa...</p>
-        </div>
-      </Card>
+  // Filtrar puntos inválidos antes de renderizar para evitar errores
+  const validPoints = useMemo(() => {
+    return points.filter(p =>
+      p.lat !== undefined && p.lng !== undefined &&
+      !isNaN(p.lat) && !isNaN(p.lng)
     );
-  }
+  }, [points]);
 
-  if (loading) {
-    return (
-      <Card
-        title="Mapa interactivo de anomalías"
-        subtitle="Cargando datos..."
-        className="h-full"
-      >
-        <div className="aspect-[16/9] w-full flex items-center justify-center bg-slate-100 rounded-xl">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
-            <p className="text-sm text-slate-600">Cargando puntos del mapa...</p>
-          </div>
-        </div>
-      </Card>
-    );
-  }
+  if (!mounted) return <LoadingCard message="Inicializando mapa..." />;
+  if (loading) return <LoadingCard message="Cargando datos del mapa..." />;
 
   return (
     <Card
-      title={`Mapa interactivo de anomalías - Modo: ${mode}`}
-      subtitle={`Visualizando ${points.length} anomalías en el mapa`}
+      title={`Mapa interactivo - ${mode === 'clusters' ? 'Agrupado' : 'Puntos'}`}
+      subtitle={`Visualizando ${validPoints.length} registros`}
       className="h-full"
     >
-      <div className="aspect-[16/9] w-full overflow-hidden rounded-xl">
+      <div className="aspect-[16/9] w-full overflow-hidden rounded-xl relative z-0">
         <LeafletMap
-          center={[4.5709, -74.2973]} // Colombia center
+          center={[4.5709, -74.2973]}
           zoom={6}
           style={{ height: "100%", width: "100%" }}
-          className="z-0"
+          scrollWheelZoom={true}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          <MapUpdater points={points} mode={mode} />
+          <MapUpdater points={validPoints} />
 
-          {mode === "points" && points.map((point) => (
-            <Marker
-              key={point.id}
-              position={[point.lat, point.lng]}
-              icon={createCustomIcon(point.severity)}
+          {/* MODO CLUSTERS (Optimizado para muchos puntos) */}
+          {mode === "clusters" ? (
+            <MarkerClusterGroup
+              chunkedLoading // <--- CLAVE PARA RENDIMIENTO
+              maxClusterRadius={60}
+              spiderfyOnMaxZoom={true}
             >
-              <Popup>
-                <div className="text-xs space-y-1">
-                  <p className="font-semibold text-slate-900">{point.municipio}</p>
-                  <p className="text-slate-600">{point.departamento}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span
-                      className="inline-block w-3 h-3 rounded-full"
-                      style={{ backgroundColor: getMarkerColor(point.severity) }}
-                    />
-                    <span className="capitalize">{point.severity}</span>
-                  </div>
-                  <p className="text-slate-500">Tipo: {point.type}</p>
-                  <p className="text-slate-500">Año: {point.year}</p>
-                  <p className="text-slate-500">Score: {point.score.toFixed(4)}</p>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-
-          {mode === "heatmap" && (
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md">
-              <p className="text-xs text-slate-600">
-                Modo Heatmap: Mostrando densidad de {points.length} anomalías
-              </p>
-            </div>
-          )}
-
-          {mode === "clusters" && (
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md">
-              <p className="text-xs text-slate-600">
-                Modo Clusters: Agrupando {points.length} anomalías
-              </p>
-            </div>
+              {validPoints.map((point) => (
+                <PointMarker key={point.id} point={point} />
+              ))}
+            </MarkerClusterGroup>
+          ) : (
+            // MODO PUNTOS (Sin agrupar, cuidado con >500 puntos)
+            validPoints.map((point) => (
+              <PointMarker key={point.id} point={point} />
+            ))
           )}
         </LeafletMap>
+      </div>
+    </Card>
+  );
+}
+
+// Sub-componente para el Marcador Individual (más limpio)
+function PointMarker({ point }: { point: MapPoint }) {
+  return (
+    <Marker
+      position={[point.lat, point.lng]}
+      icon={createCustomIcon(point.severity)}
+    >
+      <Popup>
+        <div className="text-xs space-y-1 min-w-[150px]">
+          <p className="font-bold text-slate-900 text-sm">{point.municipio}</p>
+          <p className="text-slate-600 border-b pb-1 mb-1">{point.departamento}</p>
+
+          <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+            <span className="text-slate-500">Gravedad:</span>
+            <span className={`font-semibold capitalize`} style={{ color: getMarkerColor(point.severity) }}>
+              {point.severity}
+            </span>
+
+            <span className="text-slate-500">Tipo:</span>
+            <span className="text-slate-700">{point.type}</span>
+
+            <span className="text-slate-500">Score:</span>
+            <span className="font-mono text-slate-700">{point.score?.toFixed(3) || 'N/A'}</span>
+          </div>
+        </div>
+      </Popup>
+    </Marker>
+  );
+}
+
+// Componente de carga reutilizable
+function LoadingCard({ message }: { message: string }) {
+  return (
+    <Card title="Mapa interactivo" className="h-full">
+      <div className="aspect-[16/9] w-full flex items-center justify-center bg-slate-50 rounded-xl">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+          <p className="text-sm text-slate-500">{message}</p>
+        </div>
       </div>
     </Card>
   );

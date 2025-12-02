@@ -21,6 +21,18 @@ const PRICE_RANGE_DESCRIPTIONS: { [key: string]: string } = {
     BAJO: "Propiedad de valor económico",
 };
 
+// --- UTILS: Cálculo de Riesgo ---
+const calculateRiskScore = (rawScore: number) => {
+    // Normalizamos el score negativo a una escala de 0 a 100
+    // minScore: valor donde el riesgo es máximo (100%)
+    // maxScore: valor donde el riesgo es mínimo (0%)
+    const minScore = -0.85;
+    const maxScore = -0.45;
+
+    let percentage = ((maxScore - rawScore) / (maxScore - minScore)) * 100;
+    return Math.max(0, Math.min(100, percentage));
+};
+
 export default function PredictionResults({ prediction }: PredictionResultsProps) {
     const { clasificacion, deteccion_anomalia } = prediction;
 
@@ -36,15 +48,18 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
     // Sort by probability descending
     probabilityData.sort((a, b) => b.probValue - a.probValue);
 
-    // Anomaly severity level based on score
-    const getAnomalyLevel = (score: number) => {
-        if (score < -0.1) return { level: "Crítica", color: "red", bgColor: "bg-red-100", textColor: "text-red-900" };
-        if (score < -0.05) return { level: "Alta", color: "orange", bgColor: "bg-orange-100", textColor: "text-orange-900" };
-        if (score < -0.01) return { level: "Media", color: "yellow", bgColor: "bg-yellow-100", textColor: "text-yellow-900" };
-        return { level: "Baja", color: "green", bgColor: "bg-green-100", textColor: "text-green-900" };
+    // --- LÓGICA DE SEVERIDAD ---
+    const getAnomalyLevel = (isAnomaly: boolean, score: number) => {
+        if (!isAnomaly) {
+            return { level: "Baja (Normal)", color: "green", bgColor: "bg-green-100", textColor: "text-green-900" };
+        }
+        if (score > -0.60) return { level: "Media", color: "yellow", bgColor: "bg-yellow-100", textColor: "text-yellow-900" };
+        if (score > -0.70) return { level: "Alta", color: "orange", bgColor: "bg-orange-100", textColor: "text-orange-900" };
+        return { level: "Crítica", color: "red", bgColor: "bg-red-100", textColor: "text-red-900" };
     };
 
-    const anomalyLevel = getAnomalyLevel(deteccion_anomalia.score_anomalia);
+    const anomalyLevel = getAnomalyLevel(deteccion_anomalia.anomalia_detectada, deteccion_anomalia.score_anomalia);
+    const riskPercentage = calculateRiskScore(deteccion_anomalia.score_anomalia);
 
     return (
         <div className="space-y-6">
@@ -110,7 +125,6 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
                             </BarChart>
                         </ResponsiveContainer>
 
-                        {/* Probability Legend */}
                         <div className="mt-3 space-y-1">
                             {probabilityData.map((item) => (
                                 <div key={item.rango} className="flex justify-between text-sm">
@@ -128,8 +142,8 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
                 <div className="flex items-center gap-3 mb-6">
                     <div
                         className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-md ${deteccion_anomalia.anomalia_detectada
-                                ? "bg-gradient-to-br from-red-600 to-red-500"
-                                : "bg-gradient-to-br from-green-600 to-green-500"
+                            ? "bg-gradient-to-br from-red-600 to-red-500"
+                            : "bg-gradient-to-br from-green-600 to-green-500"
                             }`}
                     >
                         <span className="text-2xl">
@@ -143,7 +157,7 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                    {/* Status Badge */}
+                    {/* Status & Severity */}
                     <div>
                         <div className="mb-4">
                             <p className="text-sm font-medium text-slate-600 mb-3">Estado de la Transacción</p>
@@ -154,8 +168,7 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
                                         <span className="text-xl font-bold text-red-900">ANOMALÍA DETECTADA</span>
                                     </div>
                                     <p className="text-sm text-red-700 leading-relaxed">
-                                        Se han identificado patrones sospechosos en esta transacción. Se recomienda
-                                        una revisión detallada por parte de autoridades competentes.
+                                        Se han identificado patrones sospechosos en esta transacción.
                                     </p>
                                 </div>
                             ) : (
@@ -166,13 +179,11 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
                                     </div>
                                     <p className="text-sm text-green-700 leading-relaxed">
                                         La transacción no presenta patrones anómalos según el modelo de detección.
-                                        Los valores se encuentran dentro de los rangos esperados.
                                     </p>
                                 </div>
                             )}
                         </div>
 
-                        {/* Anomaly Level */}
                         <div className={`p-3 rounded-lg ${anomalyLevel.bgColor} border border-${anomalyLevel.color}-300`}>
                             <p className="text-xs font-medium text-slate-600 mb-1">Nivel de Severidad</p>
                             <p className={`text-lg font-bold ${anomalyLevel.textColor}`}>
@@ -181,48 +192,50 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
                         </div>
                     </div>
 
-                    {/* Score Gauge */}
+                    {/* NEW Risk Score Display */}
                     <div>
-                        <p className="text-sm font-medium text-slate-600 mb-3">Score de Anomalía</p>
+                        <p className="text-sm font-medium text-slate-600 mb-3">Nivel de Riesgo Calculado</p>
 
-                        {/* Score Display */}
-                        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 text-center">
-                            <div className="text-5xl font-bold text-slate-900 mb-2">
-                                {deteccion_anomalia.score_anomalia.toFixed(4)}
+                        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 text-center relative overflow-hidden">
+                            {/* Top Indicator Line */}
+                            <div
+                                className={`absolute top-0 left-0 h-1 w-full transition-colors duration-500 ${riskPercentage > 50 ? 'bg-red-500' : 'bg-green-500'
+                                    }`}
+                            />
+
+                            <div className="flex items-baseline justify-center gap-1 mb-2">
+                                <span className="text-5xl font-bold text-slate-900">
+                                    {riskPercentage.toFixed(0)}
+                                </span>
+                                <span className="text-xl text-slate-500">%</span>
                             </div>
-                            <p className="text-xs text-slate-500 mb-4">
-                                Valores más negativos indican mayor probabilidad de anomalía
+
+                            <p className="text-xs text-slate-500 mb-4 uppercase tracking-wider font-semibold">
+                                Probabilidad de Irregularidad
                             </p>
 
-                            {/* Visual Gauge */}
-                            <div className="relative h-3 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full overflow-hidden">
+                            {/* Progress Bar */}
+                            <div className="h-4 w-full bg-slate-200 rounded-full overflow-hidden">
                                 <div
-                                    className="absolute top-0 bottom-0 w-1 bg-slate-900"
-                                    style={{
-                                        left: `${Math.max(0, Math.min(100, (deteccion_anomalia.score_anomalia + 0.2) * 250))}%`,
-                                    }}
+                                    className={`h-full transition-all duration-1000 ease-out rounded-full ${riskPercentage > 75 ? 'bg-red-500' :
+                                        riskPercentage > 40 ? 'bg-yellow-500' :
+                                            'bg-green-500'
+                                        }`}
+                                    style={{ width: `${riskPercentage}%` }}
                                 />
                             </div>
-                            <div className="flex justify-between text-xs text-slate-500 mt-2">
-                                <span>Alta Anomalía</span>
-                                <span>Normal</span>
+
+                            <div className="flex justify-between text-[10px] text-slate-400 mt-2 uppercase font-medium">
+                                <span>Bajo Riesgo</span>
+                                <span>Alto Riesgo</span>
                             </div>
                         </div>
 
-                        {/* Technical Details */}
-                        <div className="mt-4 space-y-2 text-sm">
-                            <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
-                                <span className="text-slate-600">Predicción Raw:</span>
-                                <span className="font-semibold">
-                                    {deteccion_anomalia.prediccion_raw === -1 ? "Anomalía (-1)" : "Normal (1)"}
-                                </span>
-                            </div>
-                            <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
-                                <span className="text-slate-600">Es Normal:</span>
-                                <span className="font-semibold">
-                                    {deteccion_anomalia.es_normal ? "Sí ✓" : "No ✗"}
-                                </span>
-                            </div>
+                        {/* Technical Info (Collapsed) */}
+                        <div className="mt-4 text-center">
+                            <p className="text-[10px] text-slate-400">
+                                Score técnico: <span className="font-mono">{deteccion_anomalia.score_anomalia.toFixed(4)}</span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -230,12 +243,6 @@ export default function PredictionResults({ prediction }: PredictionResultsProps
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3 justify-end">
-                <button className="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 transition-colors flex items-center gap-2">
-                    📊 Ver Detalles Completos
-                </button>
-                <button className="px-6 py-3 bg-indigo-100 text-indigo-900 rounded-xl font-semibold hover:bg-indigo-200 transition-colors flex items-center gap-2">
-                    📄 Generar Reporte PDF
-                </button>
                 <button className="px-6 py-3 bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-xl font-semibold hover:from-blue-800 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
                     🔍 Nuevo Análisis
                 </button>

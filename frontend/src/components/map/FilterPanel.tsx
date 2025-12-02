@@ -88,8 +88,8 @@ export function FilterPanel({ ciudad, severidad, tipo, mode, onChange }: FilterP
                   type="button"
                   onClick={() => onChange("mode", m.value)}
                   className={`px-3 py-1 rounded-full text-[11px] font-medium border transition-all ${active
-                      ? "bg-blue-900 text-white border-blue-900 shadow-sm"
-                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                    ? "bg-blue-900 text-white border-blue-900 shadow-sm"
+                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                     }`}
                 >
                   {m.label}
